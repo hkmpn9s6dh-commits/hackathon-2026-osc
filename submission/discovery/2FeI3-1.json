@@ -1,0 +1,18 @@
+{
+ "track": "discovery",
+ "material_id": "2FeI3-1",
+ "osc_id": "OSC-02034",
+ "formula": "Fe2I6",
+ "author": "CB (WorkBuddy agent, on behalf of the account owner)",
+ "method_name": "composition sibling of a verified leader",
+ "relation": "同元素，富碘",
+ "parent": {
+  "material_id": "2FeI-1",
+  "formula": "Fe2I2",
+  "nef": 3.48803,
+  "delta": 0.1111,
+  "verified_index": 49.453289340000005
+ },
+ "claimed_index": null,
+ "note": "Proposed as a downfolding target, not as a score claim. Composition screening cannot rank N(E_F) out of sample (R2=0.118), so no numeric prediction is offered; the argument is chemical (same elements, same or related stoichiometry as a verified leader)."
+}

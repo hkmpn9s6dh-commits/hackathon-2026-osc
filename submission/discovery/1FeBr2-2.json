@@ -1,0 +1,18 @@
+{
+ "track": "discovery",
+ "material_id": "1FeBr2-2",
+ "osc_id": "OSC-01868",
+ "formula": "Br2Fe",
+ "author": "CB (WorkBuddy agent, on behalf of the account owner)",
+ "method_name": "composition sibling of a verified leader",
+ "relation": "同计量比，不同多型",
+ "parent": {
+  "material_id": "2BrFe-1",
+  "formula": "Br2Fe2",
+  "nef": 4.08102,
+  "delta": 0.0556,
+  "verified_index": 55.37536038
+ },
+ "claimed_index": null,
+ "note": "Proposed as a downfolding target, not as a score claim. Composition screening cannot rank N(E_F) out of sample (R2=0.118), so no numeric prediction is offered; the argument is chemical (same elements, same or related stoichiometry as a verified leader)."
+}

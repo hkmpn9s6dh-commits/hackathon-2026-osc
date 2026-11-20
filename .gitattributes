@@ -1,0 +1,7 @@
+# keep the frozen data byte-exact: SHA256SUMS is checked against these files
+data/** -text
+*.svg text eol=lf
+*.py text eol=lf
+*.md text eol=lf
+*.mjs text eol=lf
+*.sh text eol=lf

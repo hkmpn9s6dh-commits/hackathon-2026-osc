@@ -1,0 +1,1095 @@
+{
+ "meta": {
+  "challenge": "Open Superconductor Challenge (FINAL-Bench)",
+  "dataset_revision": "4585236f24ff4e9a9d7cee24a4ee38724248ecb7",
+  "dataset_url": "https://huggingface.co/datasets/FINAL-Bench/OSC-Superconductor",
+  "files": {
+   "active_challenge.csv": "58a29875a8a07ed5525758a95b0d93be32478cd391d1a57893332e3027728b43",
+   "candidates.csv": "051067ba6b0f51de09df350963a1ef28e2d798dbf27c5f40b476038a6a126818",
+   "submissions.csv": "f99da2341ef0fad39d9f96018c74c9bcdb25768385d21e25efb4c02f080d3b2c",
+   "scoring_meta.json": "dc7e52ad1996cf823fbba314765ccb30436508bff794402e2b951978ff39fcef",
+   "README.md": "acfd021c6e9aeeb301a8fb14a58513eef8c304ce8557d40272744309d47545c6",
+   "validation/multisize_ED_table_kuku.md": "126892ef7a810834ba5e72eb9609e057ca0434c6b0516081964523e90f7ecde7",
+   "validation/comparison_4x4_ED_vs_VMC.md": "46060ba77b8fca1c294bdf1dae8119251b4ab1b7923acc0ba1b44322a85a3146"
+  },
+  "n_active": 1073,
+  "n_candidates": 4832,
+  "n_submissions": 1073,
+  "n_pool": 759,
+  "scale": 300.0
+ },
+ "reproduction": {
+  "n": 1073,
+  "n_with_verified": 1073,
+  "max_abs_diff": 0.0004997599999999602,
+  "n_over_1e_3": 0,
+  "n_a_row_zeroed": 85,
+  "rule": "index = max(0, N(E_F) * A_d(delta) * 300)",
+  "rounding": "published verified_score is rounded to 3 decimals"
+ },
+ "grid": {
+  "n_delta": 18,
+  "ne_steps": [
+   2,
+   4,
+   6,
+   8,
+   10,
+   12,
+   14,
+   16,
+   18,
+   20,
+   22,
+   24,
+   26,
+   28,
+   30,
+   32,
+   34,
+   36
+  ],
+  "on_even_grid": true,
+  "domain": {
+   "0.0": 120,
+   "0.0556": 149,
+   "0.1111": 113,
+   "0.1667": 109,
+   "0.2222": 87,
+   "0.2778": 68,
+   "0.3333": 57,
+   "0.3889": 47,
+   "0.4444": 37,
+   "0.5": 29,
+   "0.5556": 22,
+   "0.6111": 41,
+   "0.6667": 44,
+   "0.7222": 55,
+   "0.7778": 3,
+   "0.8333": 3,
+   "0.8889": 3,
+   "0.9444": 86
+  }
+ },
+ "dome": {
+  "points": [
+   {
+    "delta": 0.0,
+    "a_d": 0.03844
+   },
+   {
+    "delta": 0.05555555555555555,
+    "a_d": 0.04523
+   },
+   {
+    "delta": 0.1111111111111111,
+    "a_d": 0.04726
+   },
+   {
+    "delta": 0.16666666666666666,
+    "a_d": 0.05569
+   },
+   {
+    "delta": 0.2222222222222222,
+    "a_d": 0.04812
+   },
+   {
+    "delta": 0.2777777777777778,
+    "a_d": 0.05849
+   },
+   {
+    "delta": 0.3333333333333333,
+    "a_d": 0.04299
+   },
+   {
+    "delta": 0.3888888888888889,
+    "a_d": 0.01269
+   },
+   {
+    "delta": 0.4444444444444444,
+    "a_d": -0.00064
+   },
+   {
+    "delta": 0.5,
+    "a_d": -0.00279
+   },
+   {
+    "delta": 0.5555555555555556,
+    "a_d": -3e-05
+   },
+   {
+    "delta": 0.6111111111111112,
+    "a_d": 0.00262
+   },
+   {
+    "delta": 0.6666666666666666,
+    "a_d": 0.00483
+   },
+   {
+    "delta": 0.7222222222222222,
+    "a_d": 0.00718
+   },
+   {
+    "delta": 0.9444444444444444,
+    "a_d": 0.00283
+   }
+  ],
+  "peak": {
+   "delta": 0.2777777777777778,
+   "a_d": 0.05849
+  },
+  "cliff": {
+   "from_delta": 0.3333333333333333,
+   "to_delta": 0.3888888888888889,
+   "a_from": 0.04299,
+   "a_to": 0.01269,
+   "a_to_raw": 0.01269,
+   "drop": 0.0303,
+   "ratio": 3.3877068557919623
+  },
+  "plateau": {
+   "max_delta": 0.3333333333333333,
+   "n": 7,
+   "a_min": 0.03844,
+   "a_max": 0.05849,
+   "spread": 1.52159209157128,
+   "n_materials": 703
+  },
+  "zero_or_negative": [
+   0.4444444444444444,
+   0.5,
+   0.5555555555555556
+  ]
+ },
+ "decomposition": {
+  "n": 976,
+  "var_log_index": 2.042173214602414,
+  "var_log_nef": 0.5020342958411962,
+  "var_log_a": 1.1643292659149376,
+  "cov": 0.18790482642313952,
+  "share_nef": 0.24583335647115323,
+  "share_a": 0.5701422668701578,
+  "share_cov": 0.18402437665868834,
+  "corr_log": 0.7288003790407659,
+  "corr_pearson": 0.24577252718855028
+ },
+ "plateau_decomposition": {
+  "n": 703,
+  "var_log_index": 0.5607412576407405,
+  "var_log_nef": 0.5082180996784171,
+  "pearson": 0.9852704597683687,
+  "spearman": 0.9684339027830442,
+  "a_min": 0.03844,
+  "a_max": 0.05849
+ },
+ "board": [
+  {
+   "rank": 1,
+   "material_id": "1SI2Mn2-1",
+   "osc_id": "OSC-01253",
+   "formula": "I2Mn2S",
+   "nef": 3.64871,
+   "delta": 0.2778,
+   "a_d": 0.05849,
+   "index": 64.02391437,
+   "nef_rank": 2
+  },
+  {
+   "rank": 2,
+   "material_id": "2BrFe-1",
+   "osc_id": "OSC-02304",
+   "formula": "Br2Fe2",
+   "nef": 4.08102,
+   "delta": 0.0556,
+   "a_d": 0.04523,
+   "index": 55.37536038,
+   "nef_rank": 1
+  },
+  {
+   "rank": 3,
+   "material_id": "2FeI-1",
+   "osc_id": "OSC-02428",
+   "formula": "Fe2I2",
+   "nef": 3.48803,
+   "delta": 0.1111,
+   "a_d": 0.04726,
+   "index": 49.453289340000005,
+   "nef_rank": 3
+  },
+  {
+   "rank": 4,
+   "material_id": "2CrISe-1",
+   "osc_id": "OSC-00545",
+   "formula": "Cr2I2Se2",
+   "nef": 3.19487,
+   "delta": 0.1111,
+   "a_d": 0.04726,
+   "index": 45.29686686,
+   "nef_rank": 5
+  },
+  {
+   "rank": 5,
+   "material_id": "1S2Se2Mn3-1",
+   "osc_id": "OSC-01283",
+   "formula": "Mn3S2Se2",
+   "nef": 2.54812,
+   "delta": 0.2778,
+   "a_d": 0.05849,
+   "index": 44.71186164,
+   "nef_rank": 12
+  },
+  {
+   "rank": 6,
+   "material_id": "2Mn2Se3-2",
+   "osc_id": "OSC-00698",
+   "formula": "Mn4Se6",
+   "nef": 2.92844,
+   "delta": 0.1111,
+   "a_d": 0.04726,
+   "index": 41.519422320000004,
+   "nef_rank": 7
+  },
+  {
+   "rank": 7,
+   "material_id": "2BrCrTe-1",
+   "osc_id": "OSC-00468",
+   "formula": "Br2Cr2Te2",
+   "nef": 2.97241,
+   "delta": 0.0556,
+   "a_d": 0.04523,
+   "index": 40.33263129,
+   "nef_rank": 6
+  },
+  {
+   "rank": 8,
+   "material_id": "1CF2Mn2-1",
+   "osc_id": "OSC-02337",
+   "formula": "CF2Mn2",
+   "nef": 2.7898,
+   "delta": 0.1111,
+   "a_d": 0.04726,
+   "index": 39.553784400000005,
+   "nef_rank": 8
+  },
+  {
+   "rank": 9,
+   "material_id": "2CrITe-1",
+   "osc_id": "OSC-00546",
+   "formula": "Cr2I2Te2",
+   "nef": 3.26989,
+   "delta": 0.0,
+   "a_d": 0.03844,
+   "index": 37.70837148000001,
+   "nef_rank": 4
+  },
+  {
+   "rank": 10,
+   "material_id": "2CrFSe-1",
+   "osc_id": "OSC-01187",
+   "formula": "Cr2F2Se2",
+   "nef": 2.65324,
+   "delta": 0.1111,
+   "a_d": 0.04726,
+   "index": 37.61763672,
+   "nef_rank": 10
+  },
+  {
+   "rank": 11,
+   "material_id": "1C2Mn3-1",
+   "osc_id": "OSC-02324",
+   "formula": "C2Mn3",
+   "nef": 2.61567,
+   "delta": 0.1111,
+   "a_d": 0.04726,
+   "index": 37.08496926,
+   "nef_rank": 11
+  },
+  {
+   "rank": 12,
+   "material_id": "2ClCrTe-1",
+   "osc_id": "OSC-00494",
+   "formula": "Cl2Cr2Te2",
+   "nef": 2.71848,
+   "delta": 0.0556,
+   "a_d": 0.04523,
+   "index": 36.88705512,
+   "nef_rank": 9
+  },
+  {
+   "rank": 13,
+   "material_id": "1NCr2F2-1",
+   "osc_id": "OSC-01186",
+   "formula": "Cr2F2N",
+   "nef": 2.36718,
+   "delta": 0.2222,
+   "a_d": 0.04812,
+   "index": 34.172610479999996,
+   "nef_rank": 14
+  },
+  {
+   "rank": 14,
+   "material_id": "2INi-2",
+   "osc_id": "OSC-02455",
+   "formula": "I2Ni2",
+   "nef": 2.39057,
+   "delta": 0.1111,
+   "a_d": 0.04726,
+   "index": 33.89350146,
+   "nef_rank": 13
+  },
+  {
+   "rank": 15,
+   "material_id": "2BaGeMn-1",
+   "osc_id": "OSC-02299",
+   "formula": "Ba2Ge2Mn2",
+   "nef": 1.9895,
+   "delta": 0.1667,
+   "a_d": 0.05569,
+   "index": 33.2385765,
+   "nef_rank": 20
+  },
+  {
+   "rank": 16,
+   "material_id": "1CoI2-2",
+   "osc_id": "OSC-02374",
+   "formula": "CoI2",
+   "nef": 1.97716,
+   "delta": 0.1667,
+   "a_d": 0.05569,
+   "index": 33.032412120000004,
+   "nef_rank": 21
+  },
+  {
+   "rank": 17,
+   "material_id": "1GeS2Mn3-1",
+   "osc_id": "OSC-01235",
+   "formula": "GeMn3S2",
+   "nef": 2.22643,
+   "delta": 0.2222,
+   "a_d": 0.04812,
+   "index": 32.140743480000005,
+   "nef_rank": 16
+  },
+  {
+   "rank": 18,
+   "material_id": "2IMoS-2",
+   "osc_id": "OSC-01255",
+   "formula": "I2Mo2S2",
+   "nef": 2.20402,
+   "delta": 0.1111,
+   "a_d": 0.04726,
+   "index": 31.248595560000002,
+   "nef_rank": 17
+  },
+  {
+   "rank": 19,
+   "material_id": "1GeSe2Fe3-1",
+   "osc_id": "OSC-01216",
+   "formula": "Fe3GeSe2",
+   "nef": 2.1839,
+   "delta": 0.1111,
+   "a_d": 0.04726,
+   "index": 30.963334200000002,
+   "nef_rank": 18
+  },
+  {
+   "rank": 20,
+   "material_id": "2AsCrTe3-1",
+   "osc_id": "OSC-00441",
+   "formula": "As2Cr2Te6",
+   "nef": 2.25618,
+   "delta": 0.0556,
+   "a_d": 0.04523,
+   "index": 30.614106420000002,
+   "nef_rank": 15
+  }
+ ],
+ "board_stats": {
+  "top20_max_delta": 0.2778,
+  "top20_levels": [
+   0.0,
+   0.0556,
+   0.1111,
+   0.1667,
+   0.2222,
+   0.2778
+  ],
+  "top1": {
+   "rank": 1,
+   "material_id": "1SI2Mn2-1",
+   "osc_id": "OSC-01253",
+   "formula": "I2Mn2S",
+   "nef": 3.64871,
+   "delta": 0.2778,
+   "a_d": 0.05849,
+   "index": 64.02391437,
+   "nef_rank": 2
+  },
+  "top2": {
+   "rank": 2,
+   "material_id": "2BrFe-1",
+   "osc_id": "OSC-02304",
+   "formula": "Br2Fe2",
+   "nef": 4.08102,
+   "delta": 0.0556,
+   "a_d": 0.04523,
+   "index": 55.37536038,
+   "nef_rank": 1
+  },
+  "top1_nef_rank": 2,
+  "share_top20_nef_rank_le_20": 0.95
+ },
+ "robust": [
+  {
+   "rank": 1,
+   "material_id": "2BrFe-1",
+   "osc_id": "OSC-02304",
+   "formula": "Br2Fe2",
+   "nef": 4.08102,
+   "delta": 0.0556,
+   "a_d": 0.04523,
+   "index": 55.37536038,
+   "board_rank": 2
+  },
+  {
+   "rank": 2,
+   "material_id": "1SI2Mn2-1",
+   "osc_id": "OSC-01253",
+   "formula": "I2Mn2S",
+   "nef": 3.64871,
+   "delta": 0.2778,
+   "a_d": 0.05849,
+   "index": 64.02391437,
+   "board_rank": 1
+  },
+  {
+   "rank": 3,
+   "material_id": "2FeI-1",
+   "osc_id": "OSC-02428",
+   "formula": "Fe2I2",
+   "nef": 3.48803,
+   "delta": 0.1111,
+   "a_d": 0.04726,
+   "index": 49.453289340000005,
+   "board_rank": 3
+  },
+  {
+   "rank": 4,
+   "material_id": "2CrITe-1",
+   "osc_id": "OSC-00546",
+   "formula": "Cr2I2Te2",
+   "nef": 3.26989,
+   "delta": 0.0,
+   "a_d": 0.03844,
+   "index": 37.70837148000001,
+   "board_rank": 9
+  },
+  {
+   "rank": 5,
+   "material_id": "2CrISe-1",
+   "osc_id": "OSC-00545",
+   "formula": "Cr2I2Se2",
+   "nef": 3.19487,
+   "delta": 0.1111,
+   "a_d": 0.04726,
+   "index": 45.29686686,
+   "board_rank": 4
+  },
+  {
+   "rank": 6,
+   "material_id": "2BrCrTe-1",
+   "osc_id": "OSC-00468",
+   "formula": "Br2Cr2Te2",
+   "nef": 2.97241,
+   "delta": 0.0556,
+   "a_d": 0.04523,
+   "index": 40.33263129,
+   "board_rank": 7
+  },
+  {
+   "rank": 7,
+   "material_id": "2Mn2Se3-2",
+   "osc_id": "OSC-00698",
+   "formula": "Mn4Se6",
+   "nef": 2.92844,
+   "delta": 0.1111,
+   "a_d": 0.04726,
+   "index": 41.519422320000004,
+   "board_rank": 6
+  },
+  {
+   "rank": 8,
+   "material_id": "1CF2Mn2-1",
+   "osc_id": "OSC-02337",
+   "formula": "CF2Mn2",
+   "nef": 2.7898,
+   "delta": 0.1111,
+   "a_d": 0.04726,
+   "index": 39.553784400000005,
+   "board_rank": 8
+  },
+  {
+   "rank": 9,
+   "material_id": "2ClCrTe-1",
+   "osc_id": "OSC-00494",
+   "formula": "Cl2Cr2Te2",
+   "nef": 2.71848,
+   "delta": 0.0556,
+   "a_d": 0.04523,
+   "index": 36.88705512,
+   "board_rank": 12
+  },
+  {
+   "rank": 10,
+   "material_id": "2CrFSe-1",
+   "osc_id": "OSC-01187",
+   "formula": "Cr2F2Se2",
+   "nef": 2.65324,
+   "delta": 0.1111,
+   "a_d": 0.04726,
+   "index": 37.61763672,
+   "board_rank": 10
+  }
+ ],
+ "ed": {
+  "curve": [
+   {
+    "n": 0.5,
+    "delta": 0.5,
+    "ed": 0.048076,
+    "osc": -0.00279
+   },
+   {
+    "n": 0.625,
+    "delta": 0.375,
+    "ed": 0.060122,
+    "osc": 0.020265
+   },
+   {
+    "n": 0.75,
+    "delta": 0.25,
+    "ed": 0.009831,
+    "osc": 0.053305000000000005
+   },
+   {
+    "n": 0.875,
+    "delta": 0.125,
+    "ed": 0.019219,
+    "osc": 0.0493675
+   },
+   {
+    "n": 1.0,
+    "delta": 0.0,
+    "ed": 0.006197,
+    "osc": 0.03844
+   }
+  ],
+  "spearman": -0.6,
+  "spreads": [
+   {
+    "n": 0.25,
+    "clusters": [
+     "2x4",
+     "sqrt8",
+     "4x4"
+    ],
+    "values": [
+     0.00216029,
+     0.0,
+     0.012094
+    ],
+    "spread": 5.598322447449185,
+    "signs": [
+     0,
+     1
+    ]
+   },
+   {
+    "n": 0.5,
+    "clusters": [
+     "2x4",
+     "sqrt8",
+     "3x4",
+     "4x4"
+    ],
+    "values": [
+     -0.00363614,
+     0.0462048,
+     0.103875,
+     0.0480759
+    ],
+    "spread": 2.2481430500727195,
+    "signs": [
+     -1,
+     1
+    ]
+   },
+   {
+    "n": 0.75,
+    "clusters": [
+     "2x4",
+     "sqrt8",
+     "4x4"
+    ],
+    "values": [
+     0.193846,
+     0.0151149,
+     0.00983108
+    ],
+    "spread": 19.71767089678855,
+    "signs": [
+     1
+    ]
+   },
+   {
+    "n": 1.0,
+    "clusters": [
+     "2x4",
+     "sqrt8",
+     "sqrt10",
+     "3x4",
+     "4x4"
+    ],
+    "values": [
+     0.0328407,
+     -0.0815632,
+     0.0359803,
+     0.010027,
+     0.00619709
+    ],
+    "spread": 5.805999267398086,
+    "signs": [
+     -1,
+     1
+    ]
+   }
+  ],
+  "sigma": 0.8794458697111432
+ },
+ "stress": {
+  "sigma": 0.8794458697111432,
+  "draws": 4000,
+  "overlap_shape": 1,
+  "expected_overlap": 9.0805,
+  "expected_overlap_frac": 0.454025,
+  "survival": {
+   "1SI2Mn2-1": 0.6435,
+   "2BrFe-1": 0.607,
+   "2FeI-1": 0.59025,
+   "2CrISe-1": 0.55225,
+   "1S2Se2Mn3-1": 0.50025,
+   "2Mn2Se3-2": 0.51025,
+   "2BrCrTe-1": 0.472,
+   "1CF2Mn2-1": 0.48125,
+   "2CrITe-1": 0.4125,
+   "2CrFSe-1": 0.45225,
+   "1C2Mn3-1": 0.43925,
+   "2ClCrTe-1": 0.43625,
+   "1NCr2F2-1": 0.39875,
+   "2INi-2": 0.38425,
+   "2BaGeMn-1": 0.40475,
+   "1CoI2-2": 0.3935,
+   "1GeS2Mn3-1": 0.36925,
+   "2IMoS-2": 0.34575,
+   "1GeSe2Fe3-1": 0.3325,
+   "2AsCrTe3-1": 0.35475
+  },
+  "first": {
+   "1SI2Mn2-1": 0.2785,
+   "2BrFe-1": 0.22325,
+   "2FeI-1": 0.179,
+   "2CrISe-1": 0.0,
+   "1S2Se2Mn3-1": 0.0,
+   "2Mn2Se3-2": 0.0,
+   "2BrCrTe-1": 0.0,
+   "1CF2Mn2-1": 0.0,
+   "2CrITe-1": 0.096,
+   "2CrFSe-1": 0.0,
+   "1C2Mn3-1": 0.0,
+   "2ClCrTe-1": 0.0,
+   "1NCr2F2-1": 0.09225,
+   "2INi-2": 0.0,
+   "2BaGeMn-1": 0.08825,
+   "1CoI2-2": 0.0,
+   "1GeS2Mn3-1": 0.0,
+   "2IMoS-2": 0.0,
+   "1GeSe2Fe3-1": 0.0,
+   "2AsCrTe3-1": 0.0
+  },
+  "shape_board": [
+   "2CrITe-1",
+   "2CoSe-1",
+   "1N2V3-1",
+   "2NiSe-3",
+   "1NbSTe-2",
+   "1AgBrCl-1",
+   "1BrISCu2-1",
+   "1NbSe2-2",
+   "1BrTeZr-1",
+   "1AuCrAs2Te6-1"
+  ]
+ },
+ "screen": {
+  "cv": {
+   "k": 15,
+   "n": 1073,
+   "mae": 0.4498867019336713,
+   "r2": 0.1184094629909832,
+   "pearson": 0.3706892077422243,
+   "delta_exact": 0.1733457595526561,
+   "delta_within_one_step": 0.1733457595526561,
+   "delta_majority": 0.13886300093196646
+  },
+  "n_pool": 759,
+  "max_pred_nef": 1.5694114087569442,
+  "top": [
+   {
+    "material_id": "1STeMn2-1",
+    "osc_id": "OSC-01278",
+    "formula": "Mn2STe",
+    "family": "TMD",
+    "gap": 0.0,
+    "sc_relevance": 0.67,
+    "pred_nef": 1.5694114087569442,
+    "pred_delta": 0.2778,
+    "nb_index_p10": 0.34854846,
+    "nb_index_p50": 22.67909091,
+    "nb_index_p90": 44.71186164,
+    "neighbours": [
+     "1GeS2Mn3-1",
+     "1GeMnSTe-1",
+     "1S2Se2Mn3-1",
+     "1MnTe2-1",
+     "1SI2Mn2-1"
+    ],
+    "sim_top": 0.8728715609439697
+   },
+   {
+    "material_id": "1NMn2-1",
+    "osc_id": "OSC-01580",
+    "formula": "Mn2N",
+    "family": "TM-pnictide",
+    "gap": 0.0,
+    "sc_relevance": 0.59,
+    "pred_nef": 1.5478101372669064,
+    "pred_delta": 0.1111,
+    "nb_index_p10": 3.8552629200000004,
+    "nb_index_p50": 26.085960420000003,
+    "nb_index_p90": 44.71186164,
+    "neighbours": [
+     "1C2Mn3-1",
+     "1GeS2Mn3-1",
+     "1S2Se2Mn3-1",
+     "2MnSe-1",
+     "1SI2Mn2-1"
+    ],
+    "sim_top": 0.7442084075352505
+   },
+   {
+    "material_id": "1CMn2-1",
+    "osc_id": "OSC-02338",
+    "formula": "CMn2",
+    "family": "other",
+    "gap": 0.0,
+    "sc_relevance": 0.42,
+    "pred_nef": 1.4989448090430473,
+    "pred_delta": 0.1111,
+    "nb_index_p10": 0.24300078,
+    "nb_index_p50": 26.085960420000003,
+    "nb_index_p90": 44.71186164,
+    "neighbours": [
+     "1C2Mn3-1",
+     "1CF2Mn2-1",
+     "1GeS2Mn3-1",
+     "1S2Se2Mn3-1",
+     "2MnSe-1"
+    ],
+    "sim_top": 0.9922778767136675
+   },
+   {
+    "material_id": "2MgMnSi-1",
+    "osc_id": "OSC-02479",
+    "formula": "Mg2Mn2Si2",
+    "family": "other",
+    "gap": 0.0,
+    "sc_relevance": 0.42,
+    "pred_nef": 1.3488453314957367,
+    "pred_delta": 0.1111,
+    "nb_index_p10": 1.1937586500000001,
+    "nb_index_p50": 21.063262140000003,
+    "nb_index_p90": 44.71186164,
+    "neighbours": [
+     "2FeMgSi-1",
+     "2Si-1",
+     "1C2Mn3-1",
+     "1GeS2Mn3-1",
+     "1S2Se2Mn3-1"
+    ],
+    "sim_top": 0.6666666666666666
+   },
+   {
+    "material_id": "1C3Mn4-1",
+    "osc_id": "OSC-02331",
+    "formula": "C3Mn4",
+    "family": "other",
+    "gap": 0.0,
+    "sc_relevance": 0.42,
+    "pred_nef": 1.2476292505925086,
+    "pred_delta": 0.1111,
+    "nb_index_p10": 0.24300078,
+    "nb_index_p50": 23.23201095,
+    "nb_index_p90": 44.71186164,
+    "neighbours": [
+     "1C2Mn3-1",
+     "1CF2Mn2-1",
+     "1GeS2Mn3-1",
+     "2C-1",
+     "1NaC12-1"
+    ],
+    "sim_top": 0.9984603532054124
+   },
+   {
+    "material_id": "1GeTe2Mn3-1",
+    "osc_id": "OSC-00637",
+    "formula": "GeMn3Te2",
+    "family": "TMD",
+    "gap": 0.0,
+    "sc_relevance": 0.75,
+    "pred_nef": 1.2207505270662051,
+    "pred_delta": 0.0556,
+    "nb_index_p10": 3.8135674500000003,
+    "nb_index_p50": 22.67909091,
+    "nb_index_p90": 44.71186164,
+    "neighbours": [
+     "1MnTe2-1",
+     "1GeMnSTe-1",
+     "1GeS2Mn3-1",
+     "1C2Mn3-1",
+     "1MnAl2Te4-1"
+    ],
+    "sim_top": 0.8366600265340756
+   },
+   {
+    "material_id": "1GeTe2Fe5-1",
+    "osc_id": "OSC-01220",
+    "formula": "Fe5GeTe2",
+    "family": "TMD",
+    "gap": 0.0,
+    "sc_relevance": 0.67,
+    "pred_nef": 1.212373231386411,
+    "pred_delta": 0.1111,
+    "nb_index_p10": 0.0,
+    "nb_index_p50": 2.77027776,
+    "nb_index_p90": 49.453289340000005,
+    "neighbours": [
+     "1GeSe2Fe3-1",
+     "1SiSe2Fe3-1",
+     "1FeNiTe2-1",
+     "2FeSe-1",
+     "2FeS-1"
+    ],
+    "sim_top": 0.7807200583588265
+   },
+   {
+    "material_id": "2GeMgMn-1",
+    "osc_id": "OSC-02435",
+    "formula": "Ge2Mg2Mn2",
+    "family": "other",
+    "gap": 0.0,
+    "sc_relevance": 0.42,
+    "pred_nef": 1.200059878361408,
+    "pred_delta": 0.2222,
+    "nb_index_p10": 0.24862965,
+    "nb_index_p50": 21.063262140000003,
+    "nb_index_p90": 44.71186164,
+    "neighbours": [
+     "2BaGeMn-1",
+     "1GeS2Mn3-1",
+     "2Ge-1",
+     "1GeMnSTe-1",
+     "1C2Mn3-1"
+    ],
+    "sim_top": 0.6666666666666666
+   },
+   {
+    "material_id": "1N3Mn4-1",
+    "osc_id": "OSC-01582",
+    "formula": "Mn4N3",
+    "family": "TM-pnictide",
+    "gap": 0.0,
+    "sc_relevance": 0.59,
+    "pred_nef": 1.180041241286748,
+    "pred_delta": 0.1111,
+    "nb_index_p10": 3.8552629200000004,
+    "nb_index_p50": 22.67909091,
+    "nb_index_p90": 44.71186164,
+    "neighbours": [
+     "1C2Mn3-1",
+     "1GeS2Mn3-1",
+     "1S2Se2Mn3-1",
+     "2MnSe-1",
+     "1SI2Mn2-1"
+    ],
+    "sim_top": 0.6656402354702748
+   },
+   {
+    "material_id": "2CaMnSi-1",
+    "osc_id": "OSC-02339",
+    "formula": "Ca2Mn2Si2",
+    "family": "other",
+    "gap": 0.0,
+    "sc_relevance": 0.42,
+    "pred_nef": 1.149103797069241,
+    "pred_delta": 0.1111,
+    "nb_index_p10": 0.3622789800000001,
+    "nb_index_p50": 11.9515644,
+    "nb_index_p90": 44.71186164,
+    "neighbours": [
+     "2Si-1",
+     "1NCa2-1",
+     "1C2Mn3-1",
+     "1GeS2Mn3-1",
+     "1S2Se2Mn3-1"
+    ],
+    "sim_top": 0.5773502691896257
+   }
+  ],
+  "nominations": [
+   {
+    "material_id": "2IMnS-1",
+    "osc_id": "OSC-00647",
+    "formula": "I2Mn2S2",
+    "family": "TMD",
+    "gap": 0.0,
+    "sc_relevance": 0.75,
+    "pred_nef": 0.8688770745901628,
+    "pred_delta": 0.2778,
+    "nb_index_p10": 4.657410390000001,
+    "nb_index_p50": 10.12493514,
+    "nb_index_p90": 44.71186164,
+    "neighbours": [
+     "1SI2Mn2-1",
+     "1GeS2Mn3-1",
+     "1NiPdI2S2-1",
+     "1HfZrI2S2-1",
+     "1S2Se2Mn3-1"
+    ],
+    "sim_top": 0.962250448649376,
+    "relation": "同元素，富硫",
+    "parent": "1SI2Mn2-1",
+    "parent_formula": "I2Mn2S",
+    "parent_nef": 3.64871,
+    "parent_delta": 0.2778,
+    "parent_index": 64.02391437
+   },
+   {
+    "material_id": "1FeBr2-1",
+    "osc_id": "OSC-01867",
+    "formula": "Br2Fe",
+    "family": "halide",
+    "gap": 0.0,
+    "sc_relevance": 0.5,
+    "pred_nef": 0.47553356263483065,
+    "pred_delta": 0.0556,
+    "nb_index_p10": 0.0,
+    "nb_index_p50": 1.33772016,
+    "nb_index_p90": 14.301206820000003,
+    "neighbours": [
+     "2BrFe-1",
+     "1AgPtBr6-1",
+     "2AgBr3-4",
+     "2AgCuBr3-1",
+     "1NaO2W2Br6-1"
+    ],
+    "sim_top": 0.9486832980505138,
+    "relation": "同计量比，不同多型",
+    "parent": "2BrFe-1",
+    "parent_formula": "Br2Fe2",
+    "parent_nef": 4.08102,
+    "parent_delta": 0.0556,
+    "parent_index": 55.37536038
+   },
+   {
+    "material_id": "1FeBr2-2",
+    "osc_id": "OSC-01868",
+    "formula": "Br2Fe",
+    "family": "halide",
+    "gap": 0.0,
+    "sc_relevance": 0.5,
+    "pred_nef": 0.47553356263483065,
+    "pred_delta": 0.0556,
+    "nb_index_p10": 0.0,
+    "nb_index_p50": 1.33772016,
+    "nb_index_p90": 14.301206820000003,
+    "neighbours": [
+     "2BrFe-1",
+     "1AgPtBr6-1",
+     "2AgBr3-4",
+     "2AgCuBr3-1",
+     "1NaO2W2Br6-1"
+    ],
+    "sim_top": 0.9486832980505138,
+    "relation": "同计量比，不同多型",
+    "parent": "2BrFe-1",
+    "parent_formula": "Br2Fe2",
+    "parent_nef": 4.08102,
+    "parent_delta": 0.0556,
+    "parent_index": 55.37536038
+   },
+   {
+    "material_id": "2FeI3-1",
+    "osc_id": "OSC-02034",
+    "formula": "Fe2I6",
+    "family": "halide",
+    "gap": 0.0,
+    "sc_relevance": 0.5,
+    "pred_nef": 0.9264502772669705,
+    "pred_delta": 0.0,
+    "nb_index_p10": 0.81199338,
+    "nb_index_p50": 8.796840240000002,
+    "nb_index_p90": 33.032412120000004,
+    "neighbours": [
+     "2FeI-1",
+     "2CuNiI3-1",
+     "2AgCuI3-1",
+     "2TaI2-1",
+     "2NbI2-1"
+    ],
+    "sim_top": 0.8944271909999159,
+    "relation": "同元素，富碘",
+    "parent": "2FeI-1",
+    "parent_formula": "Fe2I2",
+    "parent_nef": 3.48803,
+    "parent_delta": 0.1111,
+    "parent_index": 49.453289340000005
+   },
+   {
+    "material_id": "1FeI2-1",
+    "osc_id": "OSC-02038",
+    "formula": "FeI2",
+    "family": "halide",
+    "gap": 0.0,
+    "sc_relevance": 0.5,
+    "pred_nef": 0.9043547482176064,
+    "pred_delta": 0.1667,
+    "nb_index_p10": 0.0,
+    "nb_index_p50": 8.796840240000002,
+    "nb_index_p90": 33.032412120000004,
+    "neighbours": [
+     "2FeI-1",
+     "2AgCuI3-1",
+     "2CuNiI3-1",
+     "2TaI2-1",
+     "2NbI2-1"
+    ],
+    "sim_top": 0.9486832980505138,
+    "relation": "同计量比，不同多型",
+    "parent": "2FeI-1",
+    "parent_formula": "Fe2I2",
+    "parent_nef": 3.48803,
+    "parent_delta": 0.1111,
+    "parent_index": 49.453289340000005
+   }
+  ]
+ }
+}

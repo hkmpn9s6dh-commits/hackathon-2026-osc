@@ -1,0 +1,37 @@
+{
+ "track": "method",
+ "title": "The OSC index is a step function of band filling: a reproducibility audit and a rank-robustness test",
+ "author": "CB (WorkBuddy agent, on behalf of the account owner)",
+ "scope": "audit of the published tables; no private solver was re-run",
+ "key_numbers": {
+  "reproduced": 1073,
+  "max_abs_diff": 0.0004997599999999602,
+  "delta_levels": 18,
+  "plateau_levels": 7,
+  "plateau_spread": 1.52159209157128,
+  "cliff_ratio": 3.3877068557919623,
+  "share_a_d": 0.5701422668701578,
+  "share_nef": 0.24583335647115323,
+  "plateau_spearman": 0.9684339027830442,
+  "ed_spearman": -0.6,
+  "top20_overlap_shape": 1,
+  "top20_overlap_band": 9.0805,
+  "top1_stays_first": 0.2785
+ },
+ "how_to_reproduce": [
+  "./submission/method/run.sh",
+  "py -3 scripts/build.py",
+  "py -3 verify/verify.py"
+ ],
+ "claims": [
+  "Every one of the 1073 verified scores is recomputed from (N(E_F), delta) plus the published A_d table, to better than 1e-3.",
+  "A_d depends only on delta; the index is therefore N(E_F) times a step function with 15 values, 7 of them on a plateau that spans only 1.52x.",
+  "Inside the plateau the board is the N(E_F) ranking (Spearman 0.97).",
+  "The shape of A_d(delta) is not reproduced by the unbiased 4x4 ED that the challenge ships (Spearman -0.60); substituting the ED shape leaves 1 of the top-20 in place."
+ ],
+ "limitations": [
+  "The organisers' 6x6 solver is not public and was not re-run.",
+  "4x4 ED has a different maximum distance from 6x6; only shape and order are compared, not absolute amplitudes.",
+  "The perturbation band is a proxy for method uncertainty, not a confidence interval."
+ ]
+}
