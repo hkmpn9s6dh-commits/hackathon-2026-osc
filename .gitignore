@@ -1,3 +1,5 @@
 __pycache__/
 *.pyc
 proof/*.png
+brief.md
+proof/*.mjs
