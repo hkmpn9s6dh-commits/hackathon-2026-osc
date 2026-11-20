@@ -66,7 +66,7 @@ a{color:var(--teal)}
 
 <h2>六、稳健性取决于误差结构</h2>
 <p>同样的边际 σ：整体缩放 20.0/20，平滑相关 15.0/20，逐级独立 9.0/20。
-同一个 ansatz、同一段代码的误差不可能是逐级独立的——所以「第一名只有 28% 概率」这句话不成立。</p>
+同一个 ansatz、同一段代码的误差不可能是逐级独立的——所以「第一名只有 27% 概率」这个读数不该被引用。</p>
 <figure><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 720 230' width='720' height='230' role='img'><rect width='100%' height='100%' fill='#ffffff'/><text x='14.0' y='18.0' font-size='13' fill='#14202b' text-anchor='start' font-weight='600' font-family='Inter,Segoe UI,Helvetica,Arial,sans-serif'>The answer depends on the error structure, not on the data</text><text x='14.0' y='32.0' font-size='10' fill='#6b7785' text-anchor='start' font-weight='400' font-family='Inter,Segoe UI,Helvetica,Arial,sans-serif'>expected top-20 overlap out of 20, same marginal sigma</text><rect x='150.0' y='46.0' width='480.0' height='40.0' rx='2' fill='#0f766e' stroke='none' fill-opacity='0.7'/><text x='142.0' y='70.0' font-size='10' fill='#14202b' text-anchor='end' font-weight='400' font-family='Inter,Segoe UI,Helvetica,Arial,sans-serif'>single global factor</text><text x='636.0' y='70.0' font-size='10' fill='#6b7785' text-anchor='start' font-weight='400' font-family='Inter,Segoe UI,Helvetica,Arial,sans-serif'>20.0 / 20</text><rect x='150.0' y='94.0' width='360.8' height='40.0' rx='2' fill='#0f766e' stroke='none' fill-opacity='0.5'/><text x='142.0' y='118.0' font-size='10' fill='#14202b' text-anchor='end' font-weight='400' font-family='Inter,Segoe UI,Helvetica,Arial,sans-serif'>AR(1) rho=0.9</text><text x='516.8' y='118.0' font-size='10' fill='#6b7785' text-anchor='start' font-weight='400' font-family='Inter,Segoe UI,Helvetica,Arial,sans-serif'>15.0 / 20</text><rect x='150.0' y='142.0' width='216.8' height='40.0' rx='2' fill='#0f766e' stroke='none' fill-opacity='0.3'/><text x='142.0' y='166.0' font-size='10' fill='#14202b' text-anchor='end' font-weight='400' font-family='Inter,Segoe UI,Helvetica,Arial,sans-serif'>independent levels</text><text x='372.8' y='166.0' font-size='10' fill='#6b7785' text-anchor='start' font-weight='400' font-family='Inter,Segoe UI,Helvetica,Arial,sans-serif'>9.0 / 20</text><line x1='150.0' y1='186.0' x2='630.0' y2='186.0' stroke='#14202b' stroke-width='1'/></svg><figcaption>误差结构比误差大小更能改变结论。</figcaption></figure>
 
 <h2>七、筛选器连冠军都找不回</h2>
@@ -88,6 +88,6 @@ a{color:var(--teal)}
 </ol>
 
 <p class="foot">数据：FINAL-Bench / OSC-Superconductor（CC-BY-NC 4.0）。所有数字由
-<code>scripts/build.py</code> 生成，<code>verify/verify.py</code> 独立复算（94 条断言）。
+<code>scripts/build.py</code> 生成，<code>verify/verify.py</code> 独立复算（99 条断言）。
 不声称发现超导体，也不声称公布的 A_d 有误。</p>
 </div></body></html>

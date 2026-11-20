@@ -420,7 +420,7 @@
   }
  ],
  "board_stats": {
-  "top1_at_peak": false,
+  "top1_at_peak": true,
   "top20_max_delta": 0.2778,
   "top20_levels": [
    0.0,
@@ -810,7 +810,33 @@
  "half_filling": {
   "a_d": 0.03844,
   "share_of_peak": 0.657206360061549,
-  "n_materials": 120
+  "n_materials": 120,
+  "n_above": 583,
+  "top20_members": [
+   "Cr2I2Te2"
+  ],
+  "top20_without": [
+   "I2Mn2S",
+   "Br2Fe2",
+   "Fe2I2",
+   "Cr2I2Se2",
+   "Mn3S2Se2",
+   "Mn4Se6",
+   "Br2Cr2Te2",
+   "CF2Mn2",
+   "Cr2F2Se2",
+   "C2Mn3",
+   "Cl2Cr2Te2",
+   "Cr2F2N",
+   "I2Ni2",
+   "Ba2Ge2Mn2",
+   "CoI2",
+   "GeMn3S2",
+   "I2Mo2S2",
+   "Fe3GeSe2",
+   "As2Cr2Te6",
+   "Fe3Se2Si"
+  ]
  },
  "screen": {
   "cv": {
@@ -831,21 +857,27 @@
     "formula": "I2Mn2S",
     "nef": 3.64871,
     "delta": 0.2778,
-    "pred_nef": 0.9394397696626817
+    "pred_nef": 0.9394397696626817,
+    "pred_rank": 8,
+    "n": 1073
    },
    {
     "material_id": "2BrFe-1",
     "formula": "Br2Fe2",
     "nef": 4.08102,
     "delta": 0.0556,
-    "pred_nef": 0.47246638975887584
+    "pred_nef": 0.47246638975887584,
+    "pred_rank": 405,
+    "n": 1073
    },
    {
     "material_id": "2FeI-1",
     "formula": "Fe2I2",
     "nef": 3.48803,
     "delta": 0.1111,
-    "pred_nef": 0.8402336780360519
+    "pred_nef": 0.8402336780360519,
+    "pred_rank": 24,
+    "n": 1073
    }
   ],
   "top": [

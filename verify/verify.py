@@ -143,6 +143,11 @@ def main():
     check("half-filling is 65.7% of the peak",
           close(table[36] / max(table.values()), 0.6572, 0.001),
           "%.4f" % (table[36] / max(table.values())))
+    _p = sorted(((36 - ne) / 36.0, a) for ne, a in table.items())
+    plateau_vals = [a for d, a in _p if d <= 1 / 3.0 + 1e-9]
+    check("half filling is the LOWEST plateau level", close(min(plateau_vals), table[36], 1e-12))
+    check("583 materials have a higher A_d than half filling",
+          sum(1 for r in active if r["a_d"] > table[36]) == 583)
 
     print("== 5. plateau and cliff")
     pts = sorted(((36 - ne) / 36.0, a) for ne, a in table.items())
@@ -193,6 +198,15 @@ def main():
     nef_rank = {r["material_id"]: i + 1 for i, r in enumerate(nef_sorted)}
     check("19 of top-20 have N(E_F) rank <= 20",
           sum(1 for r in top20 if nef_rank[r["material_id"]] <= 20) == 19)
+    half_top = [r["formula"] for r in top20 if abs(r["delta"]) < 1e-9]
+    check("only Cr2I2Te2 in the top-20 sits at half filling", half_top == ["Cr2I2Te2"],
+          str(half_top))
+    swapped = [r["material_id"] for r in sorted(
+        active, key=lambda r: -max(0.0, r["nef"] * (0.0 if abs(r["delta"]) < 1e-9 else r["a_d"])
+                                   * scale))[:20]]
+    new = [r["formula"] for r in active if r["material_id"] in set(swapped) - set(
+        m["material_id"] for m in top20)]
+    check("zeroing A_d(0) admits Fe3Se2Si", new == ["Fe3Se2Si"], str(new))
 
     print("== 8. ED comparison")
     from osc import ed as ED
@@ -236,9 +250,9 @@ def main():
     check("screener MAE in [0.42,0.48]", 0.42 <= cv["mae"] <= 0.48, "%.3f" % cv["mae"])
     leaders = SC.recover_leaders(active)
     check("three leaders recovered by the check", len(leaders) == 3, str(len(leaders)))
-    check("every leader is under-predicted by >= 3x",
-          all(l["nef"] / l["pred_nef"] >= 3.0 for l in leaders),
-          str([round(l["nef"] / l["pred_nef"], 2) for l in leaders]))
+    ranks = [l["pred_rank"] for l in leaders]
+    check("leader predicted ranks are 8 / 405 / 24", ranks == [8, 405, 24], str(ranks))
+    check("the runner-up is misplaced beyond rank 300", max(ranks) > 300)
 
     print("== 11. artefacts")
     for p in ("out/results.json", "out/report.html", "docs/index.html",

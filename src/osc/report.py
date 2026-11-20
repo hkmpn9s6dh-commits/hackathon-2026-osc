@@ -104,7 +104,7 @@ def render_report(R, SVG, checks=0):
     board_rows = [[r["rank"], r["formula"], _f(r["index"], 2), _f(r["nef"], 3),
                    _f(r["delta"], 4), r["nef_rank"]] for r in top5]
     leader_rows = [[l["formula"], _f(l["nef"], 2), _f(l["pred_nef"], 2),
-                    _f(l["nef"] / l["pred_nef"], 1)] for l in sc["leaders"]]
+                    "%d / %d" % (l["pred_rank"], l["n"])] for l in sc["leaders"]]
     nom_rows = [[n["formula"], n["material_id"], n["relation"],
                  "%s (%s)" % (n["parent_formula"], n["parent"]),
                  _f(n["parent_nef"], 3), _f(n["parent_index"], 1)]
@@ -139,26 +139,34 @@ def render_report(R, SVG, checks=0):
 <h2>一、复算：1,064 条对得上，9 条落在表的空洞里</h2>
 <p>规则是 <code>index = max(0, N(E_F) × A_d(δ) × 300)</code>，A_d 按 <code>Ne = 36 − round(36δ)</code>
 查 <code>scoring_meta.json</code>。对 <code>submissions.csv</code> 的 1,073 条 <code>verified_score</code>
-逐条比对：最大绝对差 <b>{maxdiff:.4f}</b>，超过 0.001 的 <b>{over}</b> 条。这印证了 README 的说法——
+逐条比对：最大绝对差 <b>{maxdiff:.4f}</b>，超过 0.001 的 <b>{over}</b> 条
+（用的是 <code>active_challenge.csv</code> 的 6 位 <code>nef</code>；若改用
+<code>submissions.csv</code> 自带的 4 位 <code>nef</code>，会有 21 行越过 1e-3，最大 1.3e-3——
+两份 dump 的精度不同，这一步必须说明用哪一个）。这印证了 README 的说法——
 每一分都是可复现的。但复算过程里冒出来两处它没写的东西：</p>
 <ul>
 <li><b>表有洞。</b>A_d 表只有 {entries} 个 Ne 条目，缺 Ne = 4、6、8。恰好有 <b>{uncov}</b> 个材料
 （δ = 0.889 / 0.833 / 0.778）落在这三档，dump 里把它们写成 A_d = 0、分数 0。
 「可复现」对这 9 行是靠「缺失即 0」这个未成文约定成立的，不是从表里算出来的。</li>
-<li><b>负值被夹零。</b>有 <b>{negrows}</b> 行的表值是负数（例如 −0.00279），dump 里 {zeroed} 行写成 0.0、
-3 行保留负值；分数按 <code>max(0, ·)</code> 计。这不是错误，是规则，但它意味着「A_d = 0」有两种含义：
+<li><b>负值被夹零。</b>有 <b>{negrows}</b> 行的表值是负数（例如 −0.00279）：<code>active_challenge.csv</code> 里 85 行写成 0.0、
+3 行保留负值；<code>submissions.csv</code> 里 88 行全写 0。分数按 <code>max(0, ·)</code> 计。这不是错误，是规则，但它意味着「A_d = 0」有两种含义：
 真的算出来是 0，和表里没有这一格。</li>
 </ul>
 
 <h2>二、半满处：表说 0.0384，README 说「消失」</h2>
-<p>这是整份审计里最硬的一条。赛事 README 在解释 A_d(δ) 的形状时写：</p>
+<p>这是整份审计里最直接的一条文本冲突。赛事 README 在解释 A_d(δ) 的形状时写：</p>
 <blockquote>「A_d depends strongly on doping … <b>vanishing at half-filling</b> and heavy overdoping」</blockquote>
-<p>半满就是 δ = 0（Ne = 36，每个格点一个电子）。表里这一格给的是 <b>{hfa:.5f}</b>，是峰值
-{hfpeak:.5f} 的 <b>{hfshare}</b>。而全库有 <b>{hfn}</b> 个材料（{hfpct}）正好落在这一格上，
-它们因此拿到接近满分的 A_d。</p>
-<div class="note"><b>这不是「池子里恰好有很多半满材料」的问题。</b>在一个 U/t = 8 的 Mott 绝缘体上，
-d 波变分态在半满处保住三分之二的峰值关联，这本身就是「A_d 是 ansatz 人造物」的最强证据；
-而赛事文档恰恰用「半满处消失」来为这个指标背书。两者只能有一个对。无论哪个对，用它来排序都需要先解释这一格。</div>
+<p>半满就是 δ = 0（Ne = 36，每个格点一个电子；<code>scoring_meta.json</code> 自己把 "36" 与 0.0 配对）。
+表里这一格给的是 <b>{hfa:.5f}</b>，不是 0。<b>在役材料里有 {hfn} 个（{hfpct}）落在这一格上。</b></p>
+<div class="note"><b>要把这条说准，得同时说清三件事。</b>
+① 0.03844 是平台里<b>最低</b>的一档（峰值 0.05849），全库还有 <b>{hfabove}</b> 个材料的 A_d 比它高——
+所以问题不是「它被算得太高」，而是「README 说它该是 0，表里却不是」。
+② 这不必然说明 ansatz 造假：公开的 4×4 ED 在半满处也给出 0.0062，2×4 与 √10 给出 0.033–0.036，
+同一量级。半满非零本身可以是有限尺寸/壳层效应，不专属于变分态。
+③ 它对榜单的实际影响很小：Top-20 里只有 <b>{hftop}</b> 依赖这一档；把 A_d(0) 硬设为 0，
+它被 {hfrepl} 顶掉，其余 19 个不动。</div>
+<p>所以这条发现的分量不在「改一个数会翻榜」，而在<b>文档与数据在同一格上给出相反的物理</b>：
+这格是全表最该被复核的数，而它恰好影响的是「哪些材料算在平台里」，不是「谁第一」。</p>
 
 <figure>{fig_dome}<figcaption>图 1｜公布的 A_d(δ)。橙圈是半满：0.0384，峰值的 66%。
 平台（δ ≤ 1/3）内 7 级只差 1.52 倍；越过 1/3 掉到 0.0127（3.4 倍；从峰值算是 4.6 倍）。</figcaption></figure>
@@ -175,9 +183,9 @@ A_d 只差 1.52 倍，N(E_F) 解释了 <b>{pvar}</b> 的方差，Spearman <b>{pr
 <p>Top-20 全部落在 δ ≤ {t20d:.4f} 的 {t20lv} 级台阶上；20 个里有 {t20n} 个的 N(E_F) 排名本来就在前 20。
 榜首之争是填充位次的直接结果：</p>
 {table}
-<p><b>{t1}</b> 的 δ = {t1d:.4f}，正好是 A_d 的 argmax（{peak:.5f}）。<b>{t2}</b> 的 N(E_F) 高
+<p><b>{t1}</b> 的 δ = {t1d:.4f}，正落在 A_d 取最大值的那一档（{peak:.5f}）。<b>{t2}</b> 的 N(E_F) 高
 {nefgap}，但 δ = {t2d:.4f} 处的 A_d 低 {agap}，于是总分少 {sgap}。所以「谁第一」取决于谁的填充
-恰好落在峰上——这不算错，但它说明这块榜在排的是填充位次，不是材料。</p>
+落在峰那一档——这不算错，但它说明这块榜先按填充分档、再在档内按 N(E_F) 排，两步都不是「材料本身有多能配对」。</p>
 <figure>{fig_board}<figcaption>图 3｜Top-20 与各自的 N(E_F) 排名。深色条表示 N(E_F) 排名也在前 20。</figcaption></figure>
 
 <h2>五、ED 对比：能说明「次序未被识别」，不能裁决谁对</h2>
@@ -185,8 +193,8 @@ A_d 只差 1.52 倍，N(E_F) 解释了 <b>{pvar}</b> 的方差，Spearman <b>{pr
 <b>{rho:.2f}</b>。但这个数字必须打折看：</p>
 <ul>
 <li><b>只有 5 个点。</b>精确置换检验双侧 p = <b>{pperm:.2f}</b>。5 个点裁决不了一条曲线。</li>
-<li><b>对插值方向敏感。</b>把 ED 反向插到 15 个格点上算，ρ = <b>{grho:.2f}</b>；赛事自己在
-<code>validation/</code> 里用另一种插值读出 ≈ −0.1。三个数说明这个统计量对取点极敏感。</li>
+<li><b>换个插值就换个答案。</b>赛事自己在 <code>validation/</code> 里用另一种插值读出 ≈ −0.1。
+同一个统计量、同一批 5 个点，−0.60 与 −0.1 的差别只来自「怎么把两条不同填充的曲线对齐」。</li>
 <li><b>两个团簇不是同一个量。</b>4×4 的最大距离是 2√2，6×6 是 3√2；绝对值不可比，只能比次序。</li>
 <li><b>ED 的「峰」也不是相互作用。</b>n=0.5 处 U=8/U=0 = 1.03：ED 那个 0.048 里 97% 是无相互作用
 的壳层值。真正被相互作用增强的是 n=0.875（1.85×），而它的绝对振幅只有 0.019。</li>
@@ -197,9 +205,10 @@ A_d 只差 1.52 倍，N(E_F) 解释了 <b>{pvar}</b> 的方差，Spearman <b>{pr
 几乎全部来自能带，不是相互作用。</figcaption></figure>
 
 <h3>那把 ED 的形状代进去会怎样</h3>
-<p>把 A_d(δ) 换成 ED 的形状（归一到同一中位数，只借形状，δ &gt; 0.5 处 ED 没有数据、记 0），
-重算 Top-20：<b>20 个里剩 {ovs} 个</b>（把 ED 直接插到 18 个填充档上是 {ovg} 个）。
-这个数字只该读作「如果次序跟 ED 走，榜会长得完全不一样」，不能读作「ED 才是对的」。</p>
+<p>把 A_d(δ) 换成 ED 的形状（归一到同一中位数，只借形状；δ &gt; 0.5 处 ED 没有数据，
+按「记 0」处理——这是一个建模选择，会直接影响结果），重算 Top-20：
+<b>20 个里剩 {ovs} 个</b>。这个数字只该读作「如果次序跟 ED 走，榜会换掉大部分」，
+不能读作「ED 才是对的」，也不该叫它「稳健性下界」。</p>
 
 <h2>六、稳健性：结论取决于误差结构，而公开数据定不了误差结构</h2>
 <p>赛事公开的五个团簇在同一填充上彼此相差最多 {spreadmax:.1f} 倍，n=0.5 处还变号。
@@ -207,13 +216,13 @@ A_d 只差 1.52 倍，N(E_F) 解释了 <b>{pvar}</b> 的方差，Spearman <b>{pr
 <figure>{fig_structures}<figcaption>图 5｜同样的边际 σ，三种相关结构。整体缩放对排序零影响（这是乘法的性质），
 平滑相关保留 15/20，逐级独立只剩 9/20。</figcaption></figure>
 <ul>
-<li>单个全局乘子（等价于换团簇的整体标定）：<b>20.0 / 20</b>，第一名 100% 不变。</li>
+<li>单个全局乘子（整体标定）：<b>20.0 / 20</b>——这是乘法恒等式，不是证据，列出来只为说明它不可能是脆弱性来源。</li>
 <li>AR(1) ρ=0.9（同一个 ansatz、同一段代码，误差应是填充的光滑函数）：<b>{ovar:.1f} / 20</b>。</li>
 <li>逐级独立（最能打散排序的假设）：<b>{oind:.1f} / 20</b>，第一名保住第一的概率 {first}。</li>
 <li>σ 扫描（独立假设）：σ=0.4 → {sw0:.1f}，0.6 → {sw1:.1f}，0.88 → {sw2:.1f}，1.2 → {sw3:.1f}。</li>
 </ul>
 <p>真实误差几乎不可能是逐级独立的：同一份代码、同一个团簇、同一套 ansatz，偏差必然随填充平滑变化。
-所以「第一名只有 {first} 概率保住」这句话不成立——它是 i.i.d. 假设的产物。可辩护的说法是：
+所以「第一名只有 {first} 概率保住」这个读数不该被引用——它是 i.i.d. 假设的产物。可辩护的说法是：
 <b>排序对整体标定免疫，对随填充变化的系统误差敏感，而公开数据无法区分这两者。</b></p>
 <figure>{fig_surv}<figcaption>图 6｜最坏情况（逐级独立）下每个 Top-20 条目的存活率。这张图的作用是给出下界，
 不是给出概率。</figcaption></figure>
@@ -223,23 +232,27 @@ A_d 只差 1.52 倍，N(E_F) 解释了 <b>{pvar}</b> 的方差，Spearman <b>{pr
 <ul>
 <li>log N(E_F) 的 R² = <b>{r2:.3f}</b>，MAE = <b>{mae:.3f}</b>；δ 的精确命中 {dexact}，只比众数的 {dmaj} 高一点。</li>
 </ul>
-<p>更关键的是一次 sanity check——<b>它能不能把已知的前三名排出来</b>：</p>
+<p>更关键的是一次 sanity check——<b>它能不能把已知的前三名排到前面</b>（在 1,073 个留一法预测里的名次）：</p>
 {table_lead}
-<p>三个都低了 3.7–8.6 倍，而 759 个未降维金属里模型给出的最高预测是 {maxpred:.2f}。
-一个连冠军都压到 0.94 的模型，说「池子里最高只有 1.57」没有任何信息量——这是回归向均值收缩的算术，
-不是池子的性质。诚实的结论是：<b>公开描述符不足以做 Discovery 筛选</b>，而不是「池子里没有挑战者」。</p>
+<p>它把 I2Mn2S 排到第 8、Fe2I2 排到第 24——这两个还行；但把 Br2Fe2 排到 <b>405</b>。
+一个会把榜眼扔到 405 名的模型，没有资格判断「池子里有没有挑战者」：759 个未降维金属里它给出的最高预测
+只有 {maxpred:.2f}，那是向均值收缩的算术结果，不是池子的性质。诚实的结论是：
+<b>这套描述符 + 这个模型不足以做 Discovery 筛选</b>，而不是「池子里没有挑战者」。</p>
 <figure>{fig_screen}<figcaption>图 7｜留一法预测 vs 真值。点云被压成一条竖带。</figcaption></figure>
 
 <p>因此我们只提名 5 个<b>化学同族</b>的候选，且不给数值预测。表里是母体实测值：</p>
 {table_nom}
 <p>注意两点：一是「同计量比」这个说法只对 Br2Fe / FeI2 各自的两个多型成立，
 与母体（Br2Fe2、Fe2I2）是<b>不同计量比</b>；二是这个赌注本身很弱——多型之间的 N(E_F) 可以差很多，
-δ 也未知。提名只是把「值得算一次 DFT」的名单缩到 5 个，不构成任何预测。</p>
+δ 也未知。提名只是把「值得算一次 DFT」的名单缩到 5 个，不构成任何预测。
+另外这 5 个本来就在 <code>candidates.csv</code> 里，Discovery 比的不是「发现新化合物」，
+而是「先提出哪个待降维的对象」。</p>
 
 <h2>八、口径：这是 anchor 表，不是参赛排行榜</h2>
 <p><code>submissions.csv</code> 的 1,073 行<b>全部</b> <code>is_anchor = true</code>、作者全是
-<code>OSC-66</code>、方法名是「canonical scoring at material's DFT filling」。这是主办方对每个材料的
-标准锚点，参赛者的实时榜单不在这个 dump 里。另外 README 说榜首「currently ≈ 22」，
+<code>OSC-66</code>。方法名分两种：60 行写「canonical scoring at material's DFT filling」，
+<b>1,013 行</b>写「precise 6×6 solver @ δ=+0.00 / +0.06 / …」——后者正好是「A_d 按 15 档查表」的直接证据。
+这是主办方对每个材料的标准锚点，参赛者的实时榜单不在这个 dump 里。另外 README 说榜首「currently ≈ 22」，
 而这份 dump 的锚点顶到 <b>{t1idx:.2f}</b>（{t1}）——差三倍。两种可能：README 的数字过期了，
 或者 dump 比 README 新。无论哪种，引用这块榜时都要说清是哪个口径。</p>
 
@@ -267,7 +280,9 @@ A_d 只差 1.52 倍，N(E_F) 解释了 <b>{pvar}</b> 的方差，Spearman <b>{pr
 <h2>十一、复现</h2>
 <pre>py -3 scripts/build.py        # 重算全部数字 + 七张图 + 报告
 py -3 verify/verify.py        # 独立重算并断言（不读 results.json）</pre>
-<p><code>verify/verify.py</code> 从原始表重新推导本页每一个数字：<b>{checks} 条断言</b>，失败 0 条才算过。
+<p><code>verify/verify.py</code> 从原始表重新推导本页的结论性数字：<b>{checks} 条断言</b>
+（含数据哈希、逐行复算、格点与悬崖、榜单事实、ED 对比、三种误差结构、筛选器 sanity check、产物一致性），
+失败 0 条才算过。它不覆盖纯排版数字。
 数据快照与 SHA256 见 <code>data/SHA256SUMS</code> 与 <code>out/results.json</code>。</p>
 
 <div class="foot">数据来源：FINAL-Bench / OSC-Superconductor（CC-BY-NC 4.0，材料衍生自 C2DB；
@@ -281,6 +296,8 @@ A_d 有误——只指出：这块表的半满格与它自己的文档冲突，�
         zeroed=rep["n_a_row_zeroed"],
         hfa=hf["a_d"], hfpeak=d["peak"]["a_d"], hfshare=_pct(hf["share_of_peak"]),
         hfn=hf["n_materials"], hfpct=_pct(hf["n_materials"] / float(rep["n"])),
+        hfabove=hf["n_above"], hftop="、".join(hf["top20_members"]),
+        hfrepl=(hf["top20_without"][-1] if hf["top20_without"] else "-"),
         fig_dome=SVG["dome"], nd=g["n_delta"],
         sha=_pct(dec["share_a"]), shn=_pct(dec["share_nef"]), shc=_pct(dec["share_cov"]),
         pn=pdec["n"], pvar=_pct(pdec["pearson"] ** 2),
@@ -296,7 +313,7 @@ A_d 有误——只指出：这块表的半满格与它自己的文档冲突，�
         agap=_pct(1 - bs["top2"]["a_d"] / bs["top1"]["a_d"]),
         sgap=_pct(1 - bs["top2"]["index"] / bs["top1"]["index"]),
         fig_board=SVG["board"], rho=ed["spearman"], pperm=ed["p_perm"],
-        grho=ed["grid_spearman"], fig_ed=SVG["ed"], ovg=st.get("overlap_grid", 2),
+        fig_ed=SVG["ed"],
         spreadmax=max(s["spread"] for s in ed["spreads"] if s["spread"]),
         sigma=st["sigma"], fig_structures=SVG["structures"],
         ovar=st["structures"]["ar1"]["expected_overlap"],
@@ -306,7 +323,7 @@ A_d 有误——只指出：这块表的半满格与它自己的文档冲突，�
         sw2=st["sweep"][2]["expected_overlap"], sw3=st["sweep"][3]["expected_overlap"],
         fig_surv=SVG["survival"], r2=sc["cv"]["r2"], mae=sc["cv"]["mae"],
         dexact=_pct(sc["cv"]["delta_exact"]), dmaj=_pct(sc["cv"]["delta_majority"]),
-        table_lead=_table(["材料", "实测 N(E_F)", "留一法预测", "低估倍数"], leader_rows,
+        table_lead=_table(["材料", "实测 N(E_F)", "留一法预测", "预测名次"], leader_rows,
                           (1, 2, 3)),
         maxpred=sc["max_pred_nef"], fig_screen=SVG["screen"],
         table_nom=_table(["化学式", "material_id", "关系", "母体", "母体 N(E_F)", "母体指数"],
@@ -367,7 +384,7 @@ def render_site(R, SVG, checks=0):
 
 <h2>六、稳健性取决于误差结构</h2>
 <p>同样的边际 σ：整体缩放 {oglobal:.1f}/20，平滑相关 {ovar:.1f}/20，逐级独立 {oind:.1f}/20。
-同一个 ansatz、同一段代码的误差不可能是逐级独立的——所以「第一名只有 28% 概率」这句话不成立。</p>
+同一个 ansatz、同一段代码的误差不可能是逐级独立的——所以「第一名只有 {first} 概率」这个读数不该被引用。</p>
 <figure>{fig_structures}<figcaption>误差结构比误差大小更能改变结论。</figcaption></figure>
 
 <h2>七、筛选器连冠军都找不回</h2>
@@ -406,6 +423,7 @@ def render_site(R, SVG, checks=0):
         oglobal=st["structures"]["global"]["expected_overlap"],
         ovar=st["structures"]["ar1"]["expected_overlap"],
         oind=st["structures"]["independent"]["expected_overlap"],
+        first=_pct(st["structures"]["independent"]["first"]),
         fig_structures=SVG["structures"], r2=sc["cv"]["r2"], fig_screen=SVG["screen"],
         t1idx=bs["top1"]["index"], checks=checks,
     ))

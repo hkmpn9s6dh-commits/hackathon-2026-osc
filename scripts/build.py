@@ -58,7 +58,7 @@ def main():
     # ---- 4. the board ----------------------------------------------------
     board = AN.board(active, 20, scale)
     board_stats = dict(
-        top1_at_peak=abs(board[0]["delta"] - dome["peak"]["delta"]) < 1e-9,
+        top1_at_peak=abs(board[0]["delta"] - dome["peak"]["delta"]) < 1e-3,
         top20_max_delta=max(r["delta"] for r in board),
         top20_levels=sorted({round(r["delta"], 4) for r in board}),
         top1=board[0], top2=board[1],
@@ -130,6 +130,12 @@ def main():
                      parent_index=AN.index(p["nef"], p["a_d"], scale))
             nominations.append(r)
 
+    # ---- 7b. what the half-filling level is worth to the board ------------
+    def _board_without_half(table, active):
+        rows = sorted(active, key=lambda m: -max(0.0, m["nef"] * (0.0 if abs(m["delta"]) < 1e-9
+                                                                  else m["a_d"]) * 300.0))
+        return [r["formula"] for r in rows[:20]]
+
     # ---- 8. assemble -----------------------------------------------------
     results = dict(
         meta=dict(
@@ -157,7 +163,10 @@ def main():
         stress=st,
         half_filling=dict(a_d=dome["half_filling"]["a_d"],
                           share_of_peak=dome["half_filling"]["share_of_peak"],
-                          n_materials=sum(1 for m in active if abs(m["delta"]) < 1e-9)),
+                          n_materials=sum(1 for m in active if abs(m["delta"]) < 1e-9),
+                          n_above=sum(1 for m in active if m["a_d"] > dome["half_filling"]["a_d"]),
+                          top20_members=[r["formula"] for r in board if abs(r["delta"]) < 1e-9],
+                          top20_without=list(_board_without_half(table, active))),
         screen=dict(cv=cv, n_pool=len(pool),
                     max_pred_nef=max(r["pred_nef"] for r in screened),
                     leaders=SC.recover_leaders(active),

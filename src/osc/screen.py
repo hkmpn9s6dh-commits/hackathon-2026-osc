@@ -138,6 +138,12 @@ def recover_leaders(active, k=15, top_n=3):
     pairs = dict(((m["material_id"], p) for m, (t, p) in
                   zip(active, loo_pairs(active, k))))
     leaders = sorted(active, key=lambda m: -m["nef"] * m["a_d"])[:top_n]
-    return [dict(material_id=m["material_id"], formula=m["formula"], nef=m["nef"],
-                 delta=m["delta"], pred_nef=math.exp(pairs[m["material_id"]]))
-            for m in leaders]
+    preds = sorted(pairs.values(), reverse=True)
+    out = []
+    for m in leaders:
+        p = pairs[m["material_id"]]
+        rank = 1 + sum(1 for v in preds if v > p)
+        out.append(dict(material_id=m["material_id"], formula=m["formula"], nef=m["nef"],
+                        delta=m["delta"], pred_nef=math.exp(p), pred_rank=rank,
+                        n=len(preds)))
+    return out
