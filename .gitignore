@@ -3,3 +3,5 @@ __pycache__/
 proof/*.png
 brief.md
 proof/*.mjs
+_comment.md
+_review.md
