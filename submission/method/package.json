@@ -4,9 +4,15 @@
  "author": "CB (WorkBuddy agent, on behalf of the account owner)",
  "scope": "audit of the published tables; no private solver was re-run",
  "key_numbers": {
-  "reproduced": 1073,
+  "reproduced": 1064,
+  "rows_total": 1073,
+  "rows_in_table_holes": 9,
   "max_abs_diff": 0.0004997599999999602,
   "delta_levels": 18,
+  "positive_levels": 12,
+  "half_filling_a_d": 0.03844,
+  "half_filling_share_of_peak": 0.657206360061549,
+  "materials_at_half_filling": 120,
   "plateau_levels": 7,
   "plateau_spread": 1.52159209157128,
   "cliff_ratio": 3.3877068557919623,
@@ -14,9 +20,18 @@
   "share_nef": 0.24583335647115323,
   "plateau_spearman": 0.9684339027830442,
   "ed_spearman": -0.6,
-  "top20_overlap_shape": 1,
-  "top20_overlap_band": 9.0805,
-  "top1_stays_first": 0.2785
+  "ed_spearman_p_perm": 0.35,
+  "ed_spearman_on_grid": -0.7192683357242345,
+  "top20_overlap_shape": 4,
+  "top20_overlap_global": 20.0,
+  "top20_overlap_ar1": 15.033,
+  "top20_overlap_independent": 9.032,
+  "screener_r2": 0.1184094629909832,
+  "screener_leader_ratio": [
+   3.88,
+   8.64,
+   4.15
+  ]
  },
  "how_to_reproduce": [
   "./submission/method/run.sh",
@@ -24,14 +39,18 @@
   "py -3 verify/verify.py"
  ],
  "claims": [
-  "Every one of the 1073 verified scores is recomputed from (N(E_F), delta) plus the published A_d table, to better than 1e-3.",
-  "A_d depends only on delta; the index is therefore N(E_F) times a step function with 15 values, 7 of them on a plateau that spans only 1.52x.",
-  "Inside the plateau the board is the N(E_F) ranking (Spearman 0.97).",
-  "The shape of A_d(delta) is not reproduced by the unbiased 4x4 ED that the challenge ships (Spearman -0.60); substituting the ED shape leaves 1 of the top-20 in place."
+  "1064 of the 1073 verified scores are recomputed from (N(E_F), delta) plus the published A_d table to better than 1e-3; the remaining 9 sit at Ne=4,6,8, where the table has no entry and the dump writes 0.",
+  "The shipped table contradicts the challenge README at half filling: 0.03844 (66% of the peak) at delta=0, where the README says A_d vanishes. 120 materials (11%) sit on that level.",
+  "A_d takes 12 positive values; the seven levels with delta<=1/3 span 1.52x and the next step drops 3.4x. Inside the plateau the board is the N(E_F) ranking (Spearman 0.97).",
+  "The #1 material sits exactly on the argmax of A_d; the #2 has 12% higher N(E_F) and loses 14% of index.",
+  "ED cannot adjudicate the shape (n=5, permutation p=0.35, rho -0.60 to -0.72), but substituting the ED shape leaves 4 of the top-20 in place.",
+  "Rank stability depends on the error structure, not its size: global rescale 20/20, AR(1) 15/20, independent 9/20. The '28% chance' reading is an i.i.d. artefact and is withdrawn.",
+  "The composition-only screener fails its sanity check (leaders under-predicted 3.7x-8.6x), so it cannot say whether the un-downfolded pool contains a challenger."
  ],
  "limitations": [
   "The organisers' 6x6 solver is not public and was not re-run.",
   "4x4 ED has a different maximum distance from 6x6; only shape and order are compared, not absolute amplitudes.",
-  "The perturbation band is a proxy for method uncertainty, not a confidence interval."
+  "The perturbation band is a proxy for method uncertainty, not a confidence interval; only the ordering of the three error structures is robust.",
+  "The Discovery nominations carry no numeric prediction and rest on composition analogy only."
  ]
 }

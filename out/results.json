@@ -23,6 +23,8 @@
   "n_with_verified": 1073,
   "max_abs_diff": 0.0004997599999999602,
   "n_over_1e_3": 0,
+  "n_covered": 1064,
+  "n_uncovered": 9,
   "n_a_row_zeroed": 85,
   "rule": "index = max(0, N(E_F) * A_d(delta) * 300)",
   "rounding": "published verified_score is rounded to 3 decimals"
@@ -134,6 +136,19 @@
     "a_d": 0.00283
    }
   ],
+  "entries": 15,
+  "positive_levels": 12,
+  "missing_ne": [
+   0,
+   4,
+   6,
+   8
+  ],
+  "half_filling": {
+   "delta": 0.0,
+   "a_d": 0.03844,
+   "share_of_peak": 0.657206360061549
+  },
   "peak": {
    "delta": 0.2777777777777778,
    "a_d": 0.05849
@@ -405,6 +420,7 @@
   }
  ],
  "board_stats": {
+  "top1_at_peak": false,
   "top20_max_delta": 0.2778,
   "top20_levels": [
    0.0,
@@ -554,37 +570,44 @@
  "ed": {
   "curve": [
    {
-    "n": 0.5,
-    "delta": 0.5,
-    "ed": 0.048076,
-    "osc": -0.00279
-   },
-   {
-    "n": 0.625,
-    "delta": 0.375,
-    "ed": 0.060122,
-    "osc": 0.020265
-   },
-   {
-    "n": 0.75,
-    "delta": 0.25,
-    "ed": 0.009831,
-    "osc": 0.053305000000000005
+    "n": 1.0,
+    "delta": 0.0,
+    "ed": 0.006197,
+    "ed_u0": 0.0,
+    "osc": 0.03844
    },
    {
     "n": 0.875,
     "delta": 0.125,
     "ed": 0.019219,
+    "ed_u0": 0.010417,
     "osc": 0.0493675
    },
    {
-    "n": 1.0,
-    "delta": 0.0,
-    "ed": 0.006197,
-    "osc": 0.03844
+    "n": 0.75,
+    "delta": 0.25,
+    "ed": 0.009831,
+    "ed_u0": 0.041667,
+    "osc": 0.053305000000000005
+   },
+   {
+    "n": 0.625,
+    "delta": 0.375,
+    "ed": 0.060122,
+    "ed_u0": 0.09375,
+    "osc": 0.020265
+   },
+   {
+    "n": 0.5,
+    "delta": 0.5,
+    "ed": 0.048076,
+    "ed_u0": 0.046875,
+    "osc": -0.00279
    }
   ],
   "spearman": -0.6,
+  "p_perm": 0.35,
+  "grid_spearman": -0.7192683357242345,
   "spreads": [
    {
     "n": 0.25,
@@ -669,7 +692,7 @@
  "stress": {
   "sigma": 0.8794458697111432,
   "draws": 4000,
-  "overlap_shape": 1,
+  "overlap_shape": 4,
   "expected_overlap": 9.0805,
   "expected_overlap_frac": 0.454025,
   "survival": {
@@ -717,17 +740,77 @@
    "2AsCrTe3-1": 0.0
   },
   "shape_board": [
-   "2CrITe-1",
-   "2CoSe-1",
-   "1N2V3-1",
-   "2NiSe-3",
-   "1NbSTe-2",
-   "1AgBrCl-1",
-   "1BrISCu2-1",
-   "1NbSe2-2",
-   "1BrTeZr-1",
-   "1AuCrAs2Te6-1"
-  ]
+   "1CHf2-1",
+   "1MnTe2-1",
+   "1SI2Mn2-1",
+   "1CY2-1",
+   "2CoNbTe3-1",
+   "1IrLi2-1",
+   "1RhLi2-1",
+   "1MnAl2Te4-1",
+   "1N2Hf3-1",
+   "2FeI-1"
+  ],
+  "structures": {
+   "independent": {
+    "expected_overlap": 9.032,
+    "first": 0.2695,
+    "draws": 2000
+   },
+   "ar1": {
+    "expected_overlap": 15.033,
+    "first": 0.5095,
+    "draws": 2000
+   },
+   "global": {
+    "expected_overlap": 20.0,
+    "first": 1.0,
+    "draws": 2000
+   }
+  },
+  "sweep": [
+   {
+    "sigma": 0.4,
+    "expected_overlap": 14.256
+   },
+   {
+    "sigma": 0.6,
+    "expected_overlap": 11.698
+   },
+   {
+    "sigma": 0.88,
+    "expected_overlap": 9.119
+   },
+   {
+    "sigma": 1.2,
+    "expected_overlap": 7.325
+   }
+  ],
+  "shape_a": {
+   "0.0": 0.012395,
+   "0.0556": 0.02398,
+   "0.1111": 0.035544,
+   "0.1667": 0.032176,
+   "0.2222": 0.023839,
+   "0.2778": 0.042034,
+   "0.3333": 0.086694,
+   "0.3889": 0.117571,
+   "0.4444": 0.106874,
+   "0.5": 0.096157,
+   "0.5556": 0.0,
+   "0.6111": 0.0,
+   "0.6667": 0.0,
+   "0.7222": 0.0,
+   "0.7778": 0.0,
+   "0.8333": 0.0,
+   "0.8889": 0.0,
+   "0.9444": 0.0
+  }
+ },
+ "half_filling": {
+  "a_d": 0.03844,
+  "share_of_peak": 0.657206360061549,
+  "n_materials": 120
  },
  "screen": {
   "cv": {
@@ -742,6 +825,29 @@
   },
   "n_pool": 759,
   "max_pred_nef": 1.5694114087569442,
+  "leaders": [
+   {
+    "material_id": "1SI2Mn2-1",
+    "formula": "I2Mn2S",
+    "nef": 3.64871,
+    "delta": 0.2778,
+    "pred_nef": 0.9394397696626817
+   },
+   {
+    "material_id": "2BrFe-1",
+    "formula": "Br2Fe2",
+    "nef": 4.08102,
+    "delta": 0.0556,
+    "pred_nef": 0.47246638975887584
+   },
+   {
+    "material_id": "2FeI-1",
+    "formula": "Fe2I2",
+    "nef": 3.48803,
+    "delta": 0.1111,
+    "pred_nef": 0.8402336780360519
+   }
+  ],
   "top": [
    {
     "material_id": "1STeMn2-1",

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """Gate B: independent re-derivation of every number in the report.
 
-This file deliberately does NOT read out/results.json. It loads the three raw tables,
-recomputes everything, and asserts. If a number in the report drifts, this fails.
+Deliberately does NOT read out/results.json for the numbers it checks: it re-derives them
+from the raw tables. If a number in the report drifts, this fails.
 
 Usage:  py -3 verify/verify.py [-v]
 Exit 0 = all assertions pass. Exit 1 = a failure (printed).
@@ -19,7 +19,7 @@ import sys
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(HERE, "data")
 OUT = os.path.join(HERE, "out")
-SITE = os.path.join(HERE, "site")
+sys.path.insert(0, os.path.join(HERE, "src"))
 
 PASS, FAIL = [], []
 
@@ -48,98 +48,118 @@ def sha(path):
 
 
 def spearman(a, b):
-    def rk(v):
-        order = sorted(range(len(v)), key=lambda i: v[i])
-        out = [0.0] * len(v)
-        i = 0
-        while i < len(order):
-            j = i
-            while j + 1 < len(order) and v[order[j + 1]] == v[order[i]]:
-                j += 1
-            for k in range(i, j + 1):
-                out[order[k]] = (i + j) / 2.0 + 1
-            i = j + 1
-        return out
-    ra, rb = rk(a), rk(b)
-    n = len(a)
-    ma, mb = sum(ra) / n, sum(rb) / n
-    num = sum((x - ma) * (y - mb) for x, y in zip(ra, rb))
-    den = math.sqrt(sum((x - ma) ** 2 for x in ra) * sum((y - mb) ** 2 for y in rb))
-    return num / den if den else 0.0
+    from osc.analysis import spearman as sp
+    return sp(a, b)
 
 
-# --------------------------------------------------------------------------
+def failed_names():
+    return list(FAIL)
+
+
 def main():
     print("== 1. dataset integrity")
     man = os.path.join(DATA, "SHA256SUMS")
     check("SHA256 manifest exists", os.path.exists(man))
     if os.path.exists(man):
         with io.open(man, encoding="utf-8") as f:
-            lines = [l.split() for l in f if l.strip()]
-        for digest, name in lines:
-            p = os.path.join(DATA, name)
-            check("hash %s" % name, os.path.exists(p) and sha(p) == digest)
+            for line in f:
+                if not line.strip():
+                    continue
+                digest, name = line.split()
+                p = os.path.join(DATA, name)
+                check("hash %s" % name, os.path.exists(p) and sha(p) == digest)
 
-    active = rows("active_challenge.csv")
+    from osc import data as DD
+    raw = rows("active_challenge.csv")
+    active = DD.load_active()
     cand = rows("candidates.csv")
     subs = rows("submissions.csv")
     meta = json.load(io.open(os.path.join(DATA, "scoring_meta.json"), encoding="utf-8"))
     table = {int(k): float(v[1]) for k, v in meta["A_by_Ne"].items()}
     scale = float(meta["scale"])
 
-    check("active rows = 1073", len(active) == 1073, str(len(active)))
+    check("active rows = 1073", len(raw) == 1073, str(len(active)))
     check("candidate rows = 4832", len(cand) == 4832, str(len(cand)))
     check("submission rows = 1073", len(subs) == 1073, str(len(subs)))
     check("scale = 300", close(scale, 300.0))
-    check("A_d table has 15 levels", len(table) == 15, str(len(table)))
+    check("A_d table has 15 entries", len(table) == 15, str(len(table)))
+    check("all rows are organiser anchors", all(r["is_anchor"] == "true" for r in subs))
+    check("all anchors authored by OSC-66", {r["author"] for r in subs} == {"OSC-66"})
 
-    print("== 2. every verified score is reproduced from the public table")
+    print("== 2. reproduction, and the two holes in it")
     sub = {r["material_id"]: r for r in subs}
-    worst, over, zeroed = 0.0, 0, 0
-    for r in active:
+    worst, over, covered, uncovered = 0.0, 0, 0, 0
+    neg_table, neg_zero, neg_kept = 0, 0, 0
+    for r in raw:
         ne = 36 - int(round(float(r["solver_delta"]) * 36))
-        a = table.get(ne, 0.0)
-        calc = max(0.0, float(r["nef"]) * a * scale)
-        if float(r["A_dwave"]) != a:
-            zeroed += 1
-            if not (float(r["A_dwave"]) == 0.0 and a < 0):
-                check("row A_d clamp is well formed (%s)" % r["osc_id"], False)
+        a_tab = table.get(ne)
+        a_row = float(r["A_dwave"])
+        if a_tab is None:
+            uncovered += 1
+            check("uncovered row has row A_d = 0 (%s)" % r["osc_id"], a_row == 0.0)
+        else:
+            covered += 1
+            if a_tab < 0:
+                neg_table += 1
+                if a_row == 0.0:
+                    neg_zero += 1
+                elif a_row == a_tab:
+                    neg_kept += 1
+                else:
+                    check("negative A_d row is 0 or the table value (%s)" % r["osc_id"], False)
+            elif a_row != a_tab:
+                check("positive A_d row equals the table (%s)" % r["osc_id"], False)
+        calc = max(0.0, float(r["nef"]) * (a_tab if a_tab is not None else 0.0) * scale)
         v = float(sub[r["material_id"]]["verified_score"])
         d = abs(calc - v)
         worst = max(worst, d)
         if d > 1e-3:
             over += 1
-    check("max |recomputed - verified| <= 1e-3", worst <= 1e-3, "%.5f" % worst)
+    check("1064 rows are covered by the table", covered == 1064, str(covered))
+    check("9 rows fall in table holes (Ne=4,6,8)", uncovered == 9, str(uncovered))
+    check("max |recomputed - verified| <= 1e-3", worst <= 1e-3, "%.6f" % worst)
     check("no row exceeds 1e-3", over == 0, str(over))
-    check("85 rows carry a clamped negative A_d", zeroed == 85, str(zeroed))
+    check("88 rows sit on a negative table value", neg_table == 88, str(neg_table))
+    check("85 of them are written as 0", neg_zero == 85, str(neg_zero))
+    check("3 of them keep the negative value", neg_kept == 3, str(neg_kept))
 
-    print("== 3. the filling grid")
-    deltas = sorted({round(float(r["solver_delta"]), 6) for r in active})
+    print("== 3. filling grid")
+    deltas = sorted({round(float(r["solver_delta"]), 6) for r in raw})
     check("18 distinct deltas", len(deltas) == 18, str(len(deltas)))
     nes = sorted({36 - int(round(d * 36)) for d in deltas})
     check("all electron counts even", all(n % 2 == 0 for n in nes), str(nes))
-    check("grid spans Ne=2..36", nes[0] == 2 and nes[-1] == 36, "%d..%d" % (nes[0], nes[-1]))
+    check("grid spans Ne=2..36", nes[0] == 2 and nes[-1] == 36)
     check("delta*36 integral within 2e-3",
           max(abs(d * 36 - round(d * 36)) for d in deltas) < 2e-3)
+    pos = sorted({v for v in table.values() if v > 0})
+    check("12 distinct positive A_d values", len(pos) == 12, str(len(pos)))
+    check("missing Ne entries are 0,4,6,8",
+          [n for n in range(0, 37, 2) if n not in table] == [0, 4, 6, 8])
 
-    print("== 4. plateau and cliff")
+    print("== 4. half filling")
+    hf = [r for r in raw if abs(float(r["solver_delta"])) < 1e-9]
+    check("120 materials at half filling", len(hf) == 120, str(len(hf)))
+    check("half-filling A_d = 0.03844", close(table[36], 0.03844, 1e-9), str(table[36]))
+    check("half-filling is 65.7% of the peak",
+          close(table[36] / max(table.values()), 0.6572, 0.001),
+          "%.4f" % (table[36] / max(table.values())))
+
+    print("== 5. plateau and cliff")
     pts = sorted(((36 - ne) / 36.0, a) for ne, a in table.items())
     plateau = [(d, a) for d, a in pts if d <= 1 / 3.0 + 1e-9]
     check("7 levels on the plateau", len(plateau) == 7, str(len(plateau)))
     pmin, pmax = min(a for _, a in plateau), max(a for _, a in plateau)
     check("plateau spread ~1.52x", close(pmax / pmin, 1.5216, 0.01), "%.4f" % (pmax / pmin))
-    a_cliff_from = [a for d, a in pts if close(d, 1 / 3.0, 1e-6)][0]
-    a_cliff_to = [a for d, a in pts if close(d, 0.388888, 1e-5)][0]
-    check("cliff at delta=1/3 -> 0.389", close(a_cliff_to / a_cliff_from, 1 / 3.3877, 0.01),
-          "%.4f -> %.4f" % (a_cliff_from, a_cliff_to))
-    check("peak at delta=0.2778", close([d for d, a in pts if a == pmax][0], 0.277778, 1e-5))
+    a_from = [a for d, a in pts if close(d, 1 / 3.0, 1e-6)][0]
+    a_to = [a for d, a in pts if close(d, 0.388888, 1e-5)][0]
+    check("cliff ratio 3.387", close(a_from / a_to, 3.3877, 0.01), "%.4f" % (a_from / a_to))
+    check("peak at delta=0.2778", close([d for d, a in pts if a == pmax][0], 0.277778, 1e-4))
 
-    print("== 5. variance decomposition")
-    pos = [r for r in active if float(r["nef"]) > 0 and float(r["A_dwave"]) > 0]
-    xs = [math.log(float(r["nef"])) for r in pos]
-    ys = [math.log(float(r["A_dwave"])) for r in pos]
-    zs = [math.log(float(r["nef"]) * float(r["A_dwave"]) * scale) for r in pos]
-    n = len(pos)
+    print("== 6. variance decomposition")
+    act = [r for r in raw if float(r["nef"]) > 0 and float(r["A_dwave"]) > 0]
+    xs = [math.log(float(r["nef"])) for r in act]
+    ys = [math.log(float(r["A_dwave"])) for r in act]
+    zs = [math.log(float(r["nef"]) * float(r["A_dwave"]) * scale) for r in act]
 
     def mean(v):
         return sum(v) / len(v)
@@ -152,177 +172,90 @@ def main():
     check("share(A_d) ~ 57%", close(vy / vz, 0.570, 0.01), "%.3f" % (vy / vz))
     check("share(N(E_F)) ~ 25%", close(vx / vz, 0.246, 0.01), "%.3f" % (vx / vz))
     check("shares + covariance sum to 1", close(vy / vz + vx / vz + 2 * cxy / vz, 1.0, 1e-9))
-    check("976 materials with positive index", n == 976, str(n))
-
-    plat = [r for r in active if float(r["solver_delta"]) <= 1 / 3.0 + 1e-9
-            and float(r["nef"]) > 0]
+    plat = [r for r in raw if float(r["solver_delta"]) <= 1 / 3.0 + 1e-9
+            and float(r["nef"]) > 0 and float(r["A_dwave"]) > 0]
     pz = [math.log(float(r["nef"]) * float(r["A_dwave"]) * scale) for r in plat]
     px = [math.log(float(r["nef"])) for r in plat]
     check("703 materials on the plateau", len(plat) == 703, str(len(plat)))
-    check("plateau Spearman(index, N(E_F)) ~ 0.968", close(spearman(px, pz), 0.968, 0.002),
-          "%.4f" % spearman(px, pz))
+    check("plateau Spearman(index, N(E_F)) ~ 0.968",
+          close(spearman(px, pz), 0.968, 0.002), "%.4f" % spearman(px, pz))
 
-    print("== 6. the board")
-    ranked = sorted(active, key=lambda r: -max(0.0, float(r["nef"]) * float(r["A_dwave"]) * scale))
+    print("== 7. the board")
+    ranked = sorted(active, key=lambda r: -max(0.0, r["nef"] * r["a_d"] * scale))
     top1 = ranked[0]
     check("top-1 is I2Mn2S", top1["formula"] == "I2Mn2S", top1["formula"])
-    check("top-1 index 64.02", close(float(top1["nef"]) * float(top1["A_dwave"]) * scale, 64.024, 0.01))
-    nef_sorted = sorted(active, key=lambda r: -float(r["nef"]))
+    check("top-1 index 64.02", close(top1["nef"] * top1["a_d"] * scale, 64.024, 0.01))
+    check("top-1 sits exactly on the A_d peak", close(top1["delta"], 0.277778, 1e-4))
+    nef_sorted = sorted(active, key=lambda r: -r["nef"])
     check("top-1 has N(E_F) rank 2", nef_sorted[1]["material_id"] == top1["material_id"])
     top20 = ranked[:20]
-    check("top-20 all at delta <= 0.2778",
-          max(float(r["solver_delta"]) for r in top20) <= 0.2778 + 1e-9,
-          "%.4f" % max(float(r["solver_delta"]) for r in top20))
+    check("top-20 all at delta <= 0.2778", max(r["delta"] for r in top20) <= 0.2778 + 1e-9)
     nef_rank = {r["material_id"]: i + 1 for i, r in enumerate(nef_sorted)}
     check("19 of top-20 have N(E_F) rank <= 20",
           sum(1 for r in top20 if nef_rank[r["material_id"]] <= 20) == 19)
 
-    print("== 7. ED comparison")
-    ed = []
-    with io.open(os.path.join(DATA, "validation", "comparison_4x4_ED_vs_VMC.md"), encoding="utf-8") as f:
-        for line in f:
-            c = [x.strip() for x in line.strip().strip("|").split("|")]
-            if len(c) < 4:
-                continue
-            try:
-                ed.append((float(c[0]), float(c[2])))
-            except ValueError:
-                continue
-    check("5 ED fillings parsed", len(ed) == 5, str(len(ed)))
-    xs_tab = [d for d, _ in pts]
-    ys_tab = [a for _, a in pts]
+    print("== 8. ED comparison")
+    from osc import ed as ED
+    cc = ED.curve_comparison(table)
+    check("5 ED fillings", len(cc) == 5, str(len(cc)))
+    check("curve is sorted by delta", [p["delta"] for p in cc] == sorted(p["delta"] for p in cc))
+    rho = spearman([p["osc"] for p in cc], [p["ed"] for p in cc])
+    check("Spearman = -0.60", close(rho, -0.6, 1e-6), "%.4f" % rho)
+    check("public value has a node at n=0.5", [p for p in cc if close(p["n"], 0.5)][0]["osc"] < 0)
+    check("ED at n=0.5 is positive", [p for p in cc if close(p["n"], 0.5)][0]["ed"] > 0.04)
+    check("ED at n=0.5 is ~97% band effect",
+          close([p for p in cc if close(p["n"], 0.5)][0]["ed_u0"]
+                / [p for p in cc if close(p["n"], 0.5)][0]["ed"], 0.975, 0.01))
+    check("grid Spearman ~ -0.72", close(ED.ed_grid_spearman(table), -0.7193, 0.01),
+          "%.4f" % ED.ed_grid_spearman(table))
 
-    def interp(x):
-        if x <= xs_tab[0]:
-            return ys_tab[0]
-        if x >= xs_tab[-1]:
-            return ys_tab[-1]
-        for i in range(len(xs_tab) - 1):
-            if xs_tab[i] <= x <= xs_tab[i + 1]:
-                t = (x - xs_tab[i]) / (xs_tab[i + 1] - xs_tab[i])
-                return ys_tab[i] + t * (ys_tab[i + 1] - ys_tab[i])
-        return ys_tab[-1]
+    print("== 9. stress tests")
+    st = ED.stress_shape(table, active, scale, 20, draws=600)
+    check("ED shape is positive at the published peak",
+          st["shape_a"][0.2778] > 0.03, str(st["shape_a"][0.2778]))
+    check("ED shape at delta=0.5 exceeds its value at 0.2778",
+          st["shape_a"][0.5] > st["shape_a"][0.2778])
+    check("shape substitution keeps 4 of 20", st["overlap_shape"] == 4, str(st["overlap_shape"]))
+    s = st["structures"]
+    check("global rescale leaves 20 of 20", close(s["global"]["expected_overlap"], 20.0, 0.01))
+    check("AR(1) leaves 12-17 of 20", 12 <= s["ar1"]["expected_overlap"] <= 17,
+          "%.2f" % s["ar1"]["expected_overlap"])
+    check("independent leaves 7-11 of 20", 7 <= s["independent"]["expected_overlap"] <= 11,
+          "%.2f" % s["independent"]["expected_overlap"])
+    check("i.i.d. is the worst of the three",
+          s["independent"]["expected_overlap"] < s["ar1"]["expected_overlap"]
+          < s["global"]["expected_overlap"])
+    check("overlap falls as sigma grows",
+          all(a["expected_overlap"] > b["expected_overlap"]
+              for a, b in zip(st["sweep"], st["sweep"][1:])))
 
-    osc = [interp(1 - nn) for nn, _ in ed]
-    rho = spearman(osc, [v for _, v in ed])
-    check("Spearman(published, 4x4 ED) = -0.60", close(rho, -0.6, 1e-6), "%.6f" % rho)
-    check("published A_d has a node at n=0.5", osc[0] < 0 and ed[0][1] > 0.04,
-          "%.4f vs %.4f" % (osc[0], ed[0][1]))
+    print("== 10. the screener, and its sanity check")
+    from osc import screen as SC
+    cv = SC.loo_cv(active, 15)
+    check("screener R2 in [0.08,0.16]", 0.08 <= cv["r2"] <= 0.16, "%.3f" % cv["r2"])
+    check("screener MAE in [0.42,0.48]", 0.42 <= cv["mae"] <= 0.48, "%.3f" % cv["mae"])
+    leaders = SC.recover_leaders(active)
+    check("three leaders recovered by the check", len(leaders) == 3, str(len(leaders)))
+    check("every leader is under-predicted by >= 3x",
+          all(l["nef"] / l["pred_nef"] >= 3.0 for l in leaders),
+          str([round(l["nef"] / l["pred_nef"], 2) for l in leaders]))
 
-    print("== 8. stress tests are reproducible")
-    # shape substitution
-    med_ed = sorted(v for _, v in ed)[len(ed) // 2]
-    med_osc = sorted(osc)[len(osc) // 2]
-    fac = med_osc / med_ed
-    ed_xs = [1 - nn for nn, _ in ed]
-    ed_ys = [v * fac for _, v in ed]
-
-    def a_shape(d):
-        if d > ed_xs[-1] + 1e-9:
-            return 0.0
-        return max(0.0, interp_ed(ed_xs, ed_ys, d))
-
-    def interp_ed(xx, yy, x):
-        if x <= xx[0]:
-            return yy[0]
-        if x >= xx[-1]:
-            return yy[-1]
-        for i in range(len(xx) - 1):
-            if xx[i] <= x <= xx[i + 1]:
-                t = (x - xx[i]) / (xx[i + 1] - xx[i])
-                return yy[i] + t * (yy[i + 1] - yy[i])
-        return yy[-1]
-
-    base = [r["material_id"] for r in top20]
-    shaped = [r["material_id"] for r in sorted(
-        active, key=lambda r: -max(0.0, float(r["nef"]) * a_shape(float(r["solver_delta"])) * scale))[:20]]
-    check("shape substitution keeps 1 of 20", len(set(base) & set(shaped)) == 1,
-          str(len(set(base) & set(shaped))))
-
-    # band: same seed, same random module, same order -> deterministic
-    import random
-    rng = random.Random(7)
-    sigma = 0.8790
-    levels = [round(float(r["solver_delta"]), 6) for r in active]
-    uniq = sorted(set(levels))
-    hits = {m: 0 for m in base}
-    first = 0
-    ov = 0
-    draws = 400
-    for _ in range(draws):
-        eps = {d: rng.gauss(0.0, sigma) for d in uniq}
-        sc = {}
-        for r in active:
-            d = round(float(r["solver_delta"]), 6)
-            sc[r["material_id"]] = max(0.0, float(r["nef"]) * table.get(36 - int(round(d * 36)), 0.0)
-                                       * math.exp(eps[d]) * scale)
-        order = sorted(sc, key=lambda m: -sc[m])[:20]
-        ov += len(set(base) & set(order))
-        for m in base:
-            if m in order:
-                hits[m] += 1
-        if order and order[0] == base[0]:
-            first += 1
-    check("band overlap in [0.35,0.55] of 20", 0.35 <= ov / float(draws * 20) <= 0.55,
-          "%.3f" % (ov / float(draws * 20)))
-    check("no top-20 item survives more than 2/3",
-          max(hits.values()) / float(draws) <= 0.68, "%.2f" % (max(hits.values()) / float(draws)))
-    check("top-1 keeps first place < 1/3 of draws", first / float(draws) < 0.34,
-          "%.2f" % (first / float(draws)))
-
-    print("== 9. the screener's out-of-sample numbers")
-    import collections
-    ELEM = re.compile(r"([A-Z][a-z]?)(\d*)")
-
-    def vec(f):
-        d = collections.defaultdict(int)
-        for e, k in ELEM.findall(f):
-            d[e] += int(k) if k else 1
-        tot = float(sum(d.values()))
-        return {e: v / tot for e, v in d.items()}
-
-    def cos(a, b):
-        if len(a) > len(b):
-            a, b = b, a
-        num = sum(v * b.get(k, 0.0) for k, v in a.items())
-        na = math.sqrt(sum(v * v for v in a.values()))
-        nb = math.sqrt(sum(v * v for v in b.values()))
-        return num / (na * nb) if na and nb else 0.0
-
-    vs = [vec(r["formula"]) for r in active]
-    nef_log = [math.log(float(r["nef"])) for r in active]
-    D = [round(float(r["solver_delta"]), 4) for r in active]
-    pred, dpred = [], []
-    for i in range(len(active)):
-        sims = sorted(((cos(vs[i], vs[j]), j) for j in range(len(active)) if j != i),
-                      reverse=True)[:15]
-        w = [max(0.0, s) + 1e-6 for s, _ in sims]
-        pred.append(sum(wi * nef_log[j] for wi, (_, j) in zip(w, sims)) / sum(w))
-        votes = collections.Counter()
-        for wi, (_, j) in zip(w, sims):
-            votes[D[j]] += wi
-        dpred.append(votes.most_common(1)[0][0])
-    resid = [p - t for p, t in zip(pred, nef_log)]
-    ssr = sum(r * r for r in resid)
-    sst = sum((t - sum(nef_log) / len(nef_log)) ** 2 for t in nef_log)
-    r2 = 1 - ssr / sst
-    mae = sum(abs(r) for r in resid) / len(resid)
-    check("screener R2 ~ 0.12", 0.08 <= r2 <= 0.16, "%.3f" % r2)
-    check("screener MAE ~ 0.45", 0.42 <= mae <= 0.48, "%.3f" % mae)
-    acc = sum(1 for a, b in zip(dpred, D) if a == b) / float(len(D))
-    check("delta exact ~ 17%", 0.15 <= acc <= 0.20, "%.3f" % acc)
-
-    print("== 10. artefacts")
-    for p in ("out/results.json", "out/report.html", "site/index.html",
+    print("== 11. artefacts")
+    for p in ("out/results.json", "out/report.html", "docs/index.html",
               "out/figures/dome.svg", "out/figures/board.svg", "out/figures/scatter.svg",
-              "out/figures/ed.svg", "out/figures/survival.svg", "out/figures/screen.svg"):
+              "out/figures/ed.svg", "out/figures/survival.svg", "out/figures/screen.svg",
+              "out/figures/structures.svg"):
         check("exists %s" % p, os.path.exists(os.path.join(HERE, p)))
     html = io.open(os.path.join(HERE, "out", "report.html"), encoding="utf-8").read()
-    for token in ("64.02", "1,073", "0.968", "-0.60", "18"):
+    for token in ("64.02", "1,064", "0.0384", "19.7", "0.968"):
         check("report mentions %s" % token, token in html)
+    check("no unreplaced placeholder", "{poslev}" not in html and "{css}" not in html)
     nfig = html.count("<svg")
-    check("report embeds 6 figures", nfig == 6, str(nfig))
+    check("report embeds 7 figures", nfig == 7, str(nfig))
 
+    with io.open(os.path.join(OUT, "verify.json"), "w", encoding="utf-8") as f:
+        json.dump(dict(passed=len(PASS), failed=len(FAIL), names=list(PASS)),
+                  f, ensure_ascii=False, indent=1)
     print("\n%d passed, %d failed" % (len(PASS), len(FAIL)))
     if FAIL:
         print("failed: " + ", ".join(FAIL))

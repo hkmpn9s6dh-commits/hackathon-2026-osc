@@ -17,7 +17,7 @@ from osc import data as D               # noqa: E402
 from osc import ed as ED                # noqa: E402
 from osc import screen as SC            # noqa: E402
 from osc.figs import (fig_dome, fig_board, fig_scatter, fig_ed, fig_survival,  # noqa: E402
-                      fig_screen)
+                      fig_screen, fig_structures)
 from osc.report import render_report, render_site  # noqa: E402
 
 OUT = os.path.join(HERE, "out")
@@ -37,6 +37,8 @@ def main():
     repro = dict(
         n=len(rep), n_with_verified=len(diffs),
         max_abs_diff=max(diffs), n_over_1e_3=sum(1 for x in diffs if x > 1e-3),
+        n_covered=sum(1 for r in rep if r["covered"]),
+        n_uncovered=sum(1 for r in rep if not r["covered"]),
         n_a_row_zeroed=sum(1 for r in rep if not r["a_matches_row"]),
         rule="index = max(0, N(E_F) * A_d(delta) * 300)",
         rounding="published verified_score is rounded to 3 decimals",
@@ -56,6 +58,7 @@ def main():
     # ---- 4. the board ----------------------------------------------------
     board = AN.board(active, 20, scale)
     board_stats = dict(
+        top1_at_peak=abs(board[0]["delta"] - dome["peak"]["delta"]) < 1e-9,
         top20_max_delta=max(r["delta"] for r in board),
         top20_levels=sorted({round(r["delta"], 4) for r in board}),
         top1=board[0], top2=board[1],
@@ -67,6 +70,23 @@ def main():
     # ---- 5. ED comparison -----------------------------------------------
     curve = ED.curve_comparison(table)
     rho_curve = AN.spearman([p["osc"] for p in curve], [p["ed"] for p in curve])
+    # exact permutation p-value for n=5 (all 120 rank orders)
+    import itertools
+
+    def _rho(a, b):
+        ma, mb = sum(a) / len(a), sum(b) / len(b)
+        num = sum((x - ma) * (y - mb) for x, y in zip(a, b))
+        den = (sum((x - ma) ** 2 for x in a) * sum((y - mb) ** 2 for y in b)) ** 0.5
+        return num / den if den else 0.0
+
+    base_r = list(range(len(curve)))
+    hits = 0
+    for perm in itertools.permutations(base_r):
+        if abs(_rho(base_r, perm)) >= abs(rho_curve) - 1e-12:
+            hits += 1
+    p_perm = hits / 120.0
+    # the same comparison with ED carried onto the 18 filling levels
+    grid_rho = ED.ed_grid_spearman(table)
     spreads = ED.cluster_spread()
     sigma = ED.sigma_from_spread(spreads)
 
@@ -79,6 +99,8 @@ def main():
         expected_overlap_frac=stress["expected_overlap_frac"],
         survival=stress["survival"], first=stress["first"],
         shape_board=stress["shape"][:10],
+        structures=stress["structures"], sweep=stress["sweep"],
+        shape_a=stress["shape_a"],
     )
 
     # ---- 7. the screener -------------------------------------------------
@@ -128,13 +150,17 @@ def main():
         board=board,
         board_stats=board_stats,
         robust=robust,
-        ed=dict(curve=curve, spearman=rho_curve,
+        ed=dict(curve=curve, spearman=rho_curve, p_perm=p_perm, grid_spearman=grid_rho,
                 spreads=[dict(n=s["n"], clusters=s["clusters"], values=s["values"],
                               spread=s["spread"], signs=s["signs"]) for s in spreads],
                 sigma=sigma),
         stress=st,
+        half_filling=dict(a_d=dome["half_filling"]["a_d"],
+                          share_of_peak=dome["half_filling"]["share_of_peak"],
+                          n_materials=sum(1 for m in active if abs(m["delta"]) < 1e-9)),
         screen=dict(cv=cv, n_pool=len(pool),
                     max_pred_nef=max(r["pred_nef"] for r in screened),
+                    leaders=SC.recover_leaders(active),
                     top=screened[:10], nominations=nominations),
     )
     with open(os.path.join(OUT, "results.json"), "w", encoding="utf-8") as f:
@@ -142,31 +168,55 @@ def main():
 
     # ---- 9. figures ------------------------------------------------------
     svg = dict(
-        dome=fig_dome(dome, grid),
+        dome=fig_dome(dome),
         board=fig_board(board, board_stats),
         scatter=fig_scatter(active, dome),
         ed=fig_ed(curve, rho_curve),
         survival=fig_survival(board, stress),
         screen=fig_screen(SC.loo_pairs(active, 15), cv),
+        structures=fig_structures(st),
     )
     for name, body in svg.items():
         with open(os.path.join(FIG, name + ".svg"), "w", encoding="utf-8") as f:
             f.write(body)
 
     # ---- 10. report + site ----------------------------------------------
-    with open(os.path.join(OUT, "report.html"), "w", encoding="utf-8") as f:
-        f.write(render_report(results, svg))
-    os.makedirs(os.path.join(HERE, "site"), exist_ok=True)
-    with open(os.path.join(HERE, "site", "index.html"), "w", encoding="utf-8") as f:
-        f.write(render_site(results, svg))
+    def write_pages(checks):
+        with open(os.path.join(OUT, "report.html"), "w", encoding="utf-8") as f:
+            f.write(render_report(results, svg, checks))
+        os.makedirs(os.path.join(HERE, "site"), exist_ok=True)
+        with open(os.path.join(HERE, "site", "index.html"), "w", encoding="utf-8") as f:
+            f.write(render_site(results, svg, checks))
+        docs = os.path.join(HERE, "docs")
+        os.makedirs(docs, exist_ok=True)
+        with open(os.path.join(docs, "index.html"), "w", encoding="utf-8") as f:
+            f.write(render_site(results, svg, checks))
+        with open(os.path.join(docs, ".nojekyll"), "w", encoding="utf-8") as f:
+            f.write("")
 
-    # GitHub Pages serves /docs
-    docs = os.path.join(HERE, "docs")
-    os.makedirs(docs, exist_ok=True)
-    with io.open(os.path.join(docs, "index.html"), "w", encoding="utf-8") as f:
-        f.write(render_site(results, svg))
-    with io.open(os.path.join(docs, ".nojekyll"), "w", encoding="utf-8") as f:
-        f.write("")
+    prev = 0
+    vj = os.path.join(OUT, "verify.json")
+    if os.path.exists(vj):
+        try:
+            prev = int(json.load(open(vj, encoding="utf-8"))["passed"])
+        except Exception:
+            prev = 0
+    write_pages(prev)
+
+    # run the gate-B verifier and stamp the real assertion count into the pages
+    import re
+    import subprocess
+    proc = subprocess.run([sys.executable, os.path.join(HERE, "verify", "verify.py")],
+                          capture_output=True, text=True)
+    m = re.search(r"(\d+) passed, (\d+) failed", proc.stdout)
+    if not m:
+        print(proc.stdout[-2000:])
+        raise SystemExit("verify.py produced no summary")
+    passed, failed = int(m.group(1)), int(m.group(2))
+    write_pages(passed)
+    if failed:
+        print(proc.stdout[-3000:])
+        raise SystemExit("verify failed: %d" % failed)
     print("wrote out/results.json, %d figures, out/report.html, site/index.html, docs/index.html"
           % len(svg))
     print("top1=%s %.2f | overlap_shape=%d/20 | band_overlap=%.2f"

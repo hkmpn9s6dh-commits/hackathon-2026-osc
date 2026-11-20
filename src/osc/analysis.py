@@ -25,7 +25,7 @@ def reproduce(active, table, scale=300.0, submissions=None):
         ver = submissions.get(m["material_id"], {}).get("verified") if submissions else None
         rows.append(dict(
             material_id=m["material_id"], osc_id=m["osc_id"], formula=m["formula"],
-            ne=ne, delta=m["delta"], nef=m["nef"],
+            ne=ne, delta=m["delta"], nef=m["nef"], covered=ne in table,
             a_table=a_tab, a_row=m["a_d"], calc=calc, verified=ver,
             diff=(None if ver is None else abs(calc - ver)),
             a_matches_row=abs(a_tab - m["a_d"]) <= 1e-9,
@@ -59,8 +59,14 @@ def dome(table):
         drops.append((drop, d0, d1, a0, max(a1, 0.0), a1))
     drop, cliff_from, cliff_to, a_from, a_to, a_raw = max(drops)
     plateau = [(d, a) for d, a in pts if d <= cliff_from + 1e-9]
+    half = [a for d, a in pts if abs(d) < 1e-9]
+    half_a = half[0] if half else 0.0
     return dict(
         points=[dict(delta=d, a_d=a) for d, a in pts],
+        entries=len(pts),
+        positive_levels=len(pos),
+        missing_ne=[ne for ne in range(0, 37, 2) if ne not in table],
+        half_filling=dict(delta=0.0, a_d=half_a, share_of_peak=half_a / peak_a if peak_a else 0.0),
         peak=dict(delta=peak_d, a_d=peak_a),
         cliff=dict(from_delta=cliff_from, to_delta=cliff_to,
                    a_from=a_from, a_to=a_to, a_to_raw=a_raw,

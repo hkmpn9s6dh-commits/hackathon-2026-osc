@@ -12,15 +12,15 @@ font:16px/1.75 "Source Han Serif SC","Songti SC","SimSun",Georgia,serif}
 text-transform:uppercase;color:var(--teal)}
 h1{font-size:40px;line-height:1.25;margin:14px 0 8px;font-weight:700}
 .sub{font-size:18px;color:var(--muted);margin:0 0 28px}
-h2{font-size:24px;margin:52px 0 12px;padding-top:18px;border-top:1px solid var(--line)}
-h3{font-size:18px;margin:28px 0 8px}
+h2{font-size:23px;margin:52px 0 12px;padding-top:18px;border-top:1px solid var(--line)}
+h3{font-size:17px;margin:28px 0 8px}
 p{margin:0 0 14px}
 .lede{font-size:18px}
 .meta{font:13px/1.8 -apple-system,"Segoe UI",sans-serif;color:var(--muted);
 border-left:2px solid var(--teal);padding-left:14px;margin:24px 0 32px}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:24px 0}
-.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
-.card b{display:block;font:700 30px/1.2 -apple-system,"Segoe UI",sans-serif;color:var(--teal)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:24px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.card b{display:block;font:700 26px/1.2 -apple-system,"Segoe UI",sans-serif;color:var(--teal)}
 .card span{font:12px/1.5 -apple-system,"Segoe UI",sans-serif;color:var(--muted)}
 figure{margin:26px 0 30px}
 figure svg{width:100%;height:auto;border:1px solid var(--line);border-radius:10px;background:#fff}
@@ -39,9 +39,36 @@ background:#fff;font-size:15px;color:#3c4652}
 .note{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px 20px;
 font:14px/1.7 -apple-system,"Segoe UI",sans-serif}
 .note b{color:var(--amber)}
-ul{padding-left:22px}li{margin:6px 0}
+ul,ol{padding-left:22px}li{margin:6px 0}
 .foot{margin-top:60px;font:12px/1.7 -apple-system,"Segoe UI",sans-serif;color:var(--muted)}
-@media(max-width:720px){.grid{grid-template-columns:1fr}h1{font-size:30px}}
+@media(max-width:720px){.grid{grid-template-columns:repeat(2,1fr)}h1{font-size:30px}}
+"""
+
+SITE_CSS = """
+:root{--ink:#14202b;--muted:#6b7785;--line:#e3e8ee;--teal:#0f766e;--paper:#fbfbf9}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);
+font:16px/1.75 "Source Han Serif SC","Songti SC",Georgia,serif}
+.wrap{max-width:960px;margin:0 auto;padding:64px 24px 96px}
+.kicker{font:600 12px/1.4 -apple-system,"Segoe UI",sans-serif;letter-spacing:.16em;
+text-transform:uppercase;color:var(--teal)}
+h1{font-size:clamp(34px,6vw,56px);line-height:1.1;margin:16px 0 10px}
+.sub{font-size:19px;color:var(--muted);margin:0 0 36px;max-width:680px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin:32px 0 44px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+.stat b{display:block;font:700 30px/1.15 -apple-system,"Segoe UI",sans-serif;color:var(--teal)}
+.stat span{font:12px/1.5 -apple-system,"Segoe UI",sans-serif;color:var(--muted)}
+h2{font-size:22px;margin:44px 0 12px;padding-top:16px;border-top:1px solid var(--line)}
+p{margin:0 0 14px;max-width:780px}
+figure{margin:26px 0}figure svg{width:100%;height:auto;border:1px solid var(--line);border-radius:12px;background:#fff}
+figcaption{font:13px/1.7 -apple-system,"Segoe UI",sans-serif;color:var(--muted);margin-top:8px}
+table{border-collapse:collapse;width:100%;max-width:580px;margin:16px 0;
+font:14px/1.5 -apple-system,"Segoe UI",sans-serif}
+th,td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:left}
+th{font-size:11px;color:var(--muted);letter-spacing:.06em;font-weight:600}
+td.r{color:var(--muted);width:28px}td.n{text-align:right;font-variant-numeric:tabular-nums}
+li{margin:8px 0}ul,ol{padding-left:22px;max-width:780px}
+.foot{margin-top:56px;font:12px/1.7 -apple-system,"Segoe UI",sans-serif;color:var(--muted);max-width:780px}
+a{color:var(--teal)}
 """
 
 
@@ -49,8 +76,8 @@ def _f(x, n=2):
     return ("%%.%df" % n) % x
 
 
-def _pct(x):
-    return "%d%%" % round(100 * x)
+def _pct(x, n=0):
+    return ("%%.%df%%%%" % n) % (100 * x)
 
 
 def _table(headers, rows, num_cols=()):
@@ -62,22 +89,22 @@ def _table(headers, rows, num_cols=()):
             cls = " class='num'" if i in num_cols else ""
             cells.append("<td%s>%s</td>" % (cls, c))
         body.append("<tr>%s</tr>" % "".join(cells))
-    return "<table><thead><tr>%s</tr></thead><tbody>%s</tbody></table>" % (
-        h, "".join(body))
+    return "<table><thead><tr>%s</tr></thead><tbody>%s</tbody></table>" % (h, "".join(body))
 
 
-def render_report(R, SVG):
-    m, rep, g = R["meta"], R["reproduction"], R["grid"]
-    d, dec, pdec = R["dome"], R["decomposition"], R["plateau_decomposition"]
+def render_report(R, SVG, checks=0):
+    m, rep = R["meta"], R["reproduction"]
+    g, d = R["grid"], R["dome"]
+    dec, pdec = R["decomposition"], R["plateau_decomposition"]
     bs, st, ed, sc = R["board_stats"], R["stress"], R["ed"], R["screen"]
+    hf = R["half_filling"]
     board = R["board"]
-    top = board[:5]
+    top5 = board[:5]
 
     board_rows = [[r["rank"], r["formula"], _f(r["index"], 2), _f(r["nef"], 3),
-                   _f(r["delta"], 4), r["nef_rank"]] for r in top]
-    ed_rows = [[_f(p["n"], 3), _f(p["osc"], 4), _f(p["ed"], 4),
-                _f(p["ed"] / p["osc"], 2) if p["osc"] else "sign flip"]
-               for p in ed["curve"]]
+                   _f(r["delta"], 4), r["nef_rank"]] for r in top5]
+    leader_rows = [[l["formula"], _f(l["nef"], 2), _f(l["pred_nef"], 2),
+                    _f(l["nef"] / l["pred_nef"], 1)] for l in sc["leaders"]]
     nom_rows = [[n["formula"], n["material_id"], n["relation"],
                  "%s (%s)" % (n["parent_formula"], n["parent"]),
                  _f(n["parent_nef"], 3), _f(n["parent_index"], 1)]
@@ -89,7 +116,7 @@ def render_report(R, SVG):
 
 <div class="kicker">OSC · Open Superconductor Challenge · FINAL-Bench</div>
 <h1>十八级台阶</h1>
-<p class="sub">OSC 配对指数是一条关于「带填充」的阶梯函数，而不是一个关于材料的估计</p>
+<p class="sub">把 OSC 的三张公开表复算一遍之后，真正的问题不是「谁第一」，而是「表与它自己的说明书对不上」</p>
 
 <div class="meta">
 审计对象：Open Superconductor Challenge（FINAL-Bench，托管于 Hugging Face）<br>
@@ -97,208 +124,201 @@ def render_report(R, SVG):
 复现：<code>py -3 scripts/build.py &amp;&amp; py -3 verify/verify.py</code>（纯标准库，无网络）
 </div>
 
-<p class="lede">这项赛事要求参赛者为一个二维材料估计「d 波配对倾向」。我们用赛事自己公开的
-三张表，把 1,073 条已验证分数逐条复算——<b>全部对上</b>。既然分数可以被完全预测，那就值得问一句：
-这块排行榜，究竟在给什么排序？答案是：<b>带填充落在哪一级台阶，以及在这个台阶里 N(E_F) 有多大。</b>
-材料本身进入排序的部分，只剩下 N(E_F) 一个数。</p>
+<p class="lede">赛事的计分只有一行：<code>index = N(E_F) × A_d(δ) × 300</code>，其中 A_d 取自公开的
+15 点表。我们把 1,073 条官方分数逐条复算：<b>1,064 条</b>能完全从表里算出来（最大差 5e-4，是三位小数的舍入），
+另外 <b>9 条</b>落在表里根本没有条目的填充上。复算本身没有问题；问题出在复算所依赖的那张表——
+它在「半满」这一格上，和赛事 README 写的物理正好相反。</p>
 
 <div class="grid">
-<div class="card"><b>{n}</b><span>条已验证分数，逐条复算，误差 &lt; 1e-3 的占 100%</span></div>
-<div class="card"><b>{lv:d}</b><span>个带填充档位（偶数电子数 / 36），A_d 只有 {tab:d} 个取值</span></div>
-<div class="card"><b>{rho:.2f}</b><span>平台内 log 分数与 log N(E_F) 的 Spearman 相关</span></div>
+<div class="card"><b>1,064<span style="font-size:15px">/1,073</span></b><span>条分数可由公开表直接算出；9 条落在表的空洞里</span></div>
+<div class="card"><b>{poslev}</b><span>个不同的 A_d 正取值（表里共 {entries} 个条目）</span></div>
+<div class="card"><b>{prho:.2f}</b><span>平台内「分数 vs N(E_F)」的 Spearman</span></div>
+<div class="card"><b>{ovs}/20</b><span>换成 4×4 ED 的形状后，Top-20 的存活数</span></div>
 </div>
 
-<h2>一、先证明这块榜是可算的</h2>
-<p>官方在 README 里写：<i>「The solver's inputs and its A_d(δ) table are published, so every verified
-score is reproducible」</i>。我们把这句话变成一个可执行断言。规则只有一行：</p>
-<pre>index = max(0, N(E_F) × A_d(δ) × 300)      A_d(δ) 取自 scoring_meta.json，δ = 1 − Ne/36</pre>
-<p>对 <code>submissions.csv</code> 的 {n} 条 <code>verified_score</code> 逐条比对：最大绝对差
-<b>{maxdiff:.4f}</b>（官方把分数保留三位小数），超过 0.001 的 <b>{over}</b> 条。
-另外有 <b>{zeroed:d}</b> 条材料，表里的 A_d 是负数（例如 −0.00279），行里写成 0.0——
-分数按 0 计，行里保留负值。这是唯一的「表与行不一致」，不影响复算。</p>
-
-<div class="note"><b>这意味着什么：</b>排行榜不包含任何未公开的计算。任何人拿到这三张表，都能在
-一秒钟内算出全部 1,073 条官方分数，包括每一条的最终排名。这不是漏洞，是设计（「hard to game」）；
-但它也说明——榜单的信息量，等于这三张表的信息量。</div>
-
-<h2>二、十八级台阶</h2>
-<p><code>solver_delta</code> 只取 {nd:d} 个值，全部是 36 格点上的偶数电子数：
-Ne ∈ {steps}。官方的 6×6 求解器只在这些填充上跑过，所以 A_d 不是一条连续曲线，
-而是一组台阶；{tab:d} 个取值里，7 个落在平台，其余是悬崖和谷底。</p>
-
-<figure>{fig_dome}<figcaption>图 1｜A_d(δ) 的形状。δ ≤ 1/3 的 7 级台阶只差
-{pspread:.2f} 倍（{pmin:.4f}–{pmax:.4f}），一个台阶之后掉到 {cliff_to:.4f}，是一次
-{cratio:.2f} 倍的悬崖。所谓「d 波穹顶」，实测是「平台 + 悬崖」。</figcaption></figure>
-
-<p>这一步决定了整块榜的性格。把 log 分数拆开看：</p>
+<h2>一、复算：1,064 条对得上，9 条落在表的空洞里</h2>
+<p>规则是 <code>index = max(0, N(E_F) × A_d(δ) × 300)</code>，A_d 按 <code>Ne = 36 − round(36δ)</code>
+查 <code>scoring_meta.json</code>。对 <code>submissions.csv</code> 的 1,073 条 <code>verified_score</code>
+逐条比对：最大绝对差 <b>{maxdiff:.4f}</b>，超过 0.001 的 <b>{over}</b> 条。这印证了 README 的说法——
+每一分都是可复现的。但复算过程里冒出来两处它没写的东西：</p>
 <ul>
-<li>全部在役材料：A_d 贡献 <b>{sh_a}</b> 的方差，N(E_F) 贡献 <b>{sh_n}</b>，协方差 {sh_c}。
-换句话说，<b>「落在哪一级台阶」比「材料多能配对」更能决定分数</b>。</li>
-<li>只看平台内的 <b>{pn:d}</b> 个材料：A_d 只差 1.5 倍，N(E_F) 解释了 <b>{pvar}</b> 的方差，
-Spearman <b>{prho:.3f}</b>。台阶之内，排行榜就是 N(E_F) 排行榜。</li>
+<li><b>表有洞。</b>A_d 表只有 {entries} 个 Ne 条目，缺 Ne = 4、6、8。恰好有 <b>{uncov}</b> 个材料
+（δ = 0.889 / 0.833 / 0.778）落在这三档，dump 里把它们写成 A_d = 0、分数 0。
+「可复现」对这 9 行是靠「缺失即 0」这个未成文约定成立的，不是从表里算出来的。</li>
+<li><b>负值被夹零。</b>有 <b>{negrows}</b> 行的表值是负数（例如 −0.00279），dump 里 {zeroed} 行写成 0.0、
+3 行保留负值；分数按 <code>max(0, ·)</code> 计。这不是错误，是规则，但它意味着「A_d = 0」有两种含义：
+真的算出来是 0，和表里没有这一格。</li>
 </ul>
 
-<h2>三、于是第一名是填充的产物</h2>
-<p>Top-20 全部落在 δ ≤ {t20d:.4f} 的 {t20lv} 级台阶上；20 个里有 {t20n:d} 个，其 N(E_F) 排名本来就在前 20。
-第一名与第二名的差距，几乎全部来自填充：</p>
-{board_table}
-<p><b>{t1}</b>（δ={t1d:.4f}）拿第一，<b>{t2}</b>（δ={t2d:.4f}）拿第二。后者的 N(E_F) 更高
-（{t2nef:.3f} vs {t1nef:.3f}，高 {nefgap}），但它的填充落在平台的偏低端，A_d 少了
-{agap}，于是总分少 {sgap}。若把 A_d 抹平成只看 N(E_F)，第一名会换人。</p>
+<h2>二、半满处：表说 0.0384，README 说「消失」</h2>
+<p>这是整份审计里最硬的一条。赛事 README 在解释 A_d(δ) 的形状时写：</p>
+<blockquote>「A_d depends strongly on doping … <b>vanishing at half-filling</b> and heavy overdoping」</blockquote>
+<p>半满就是 δ = 0（Ne = 36，每个格点一个电子）。表里这一格给的是 <b>{hfa:.5f}</b>，是峰值
+{hfpeak:.5f} 的 <b>{hfshare}</b>。而全库有 <b>{hfn}</b> 个材料（{hfpct}）正好落在这一格上，
+它们因此拿到接近满分的 A_d。</p>
+<div class="note"><b>这不是「池子里恰好有很多半满材料」的问题。</b>在一个 U/t = 8 的 Mott 绝缘体上，
+d 波变分态在半满处保住三分之二的峰值关联，这本身就是「A_d 是 ansatz 人造物」的最强证据；
+而赛事文档恰恰用「半满处消失」来为这个指标背书。两者只能有一个对。无论哪个对，用它来排序都需要先解释这一格。</div>
 
-<figure>{fig_scatter}<figcaption>图 2｜分数与 N(E_F)。台阶之内是一条直线（相关性 0.985），
-台阶之外整片沉下去。材料之间的差别，只在同一台阶内才看得见。</figcaption></figure>
+<figure>{fig_dome}<figcaption>图 1｜公布的 A_d(δ)。橙圈是半满：0.0384，峰值的 66%。
+平台（δ ≤ 1/3）内 7 级只差 1.52 倍；越过 1/3 掉到 0.0127（3.4 倍；从峰值算是 4.6 倍）。</figcaption></figure>
 
-<figure>{fig_board}<figcaption>图 3｜Top-20 与它们的 N(E_F) 排名。深色条表示
-N(E_F) 排名也在前 20——20 个里有 {t20n:d} 个。</figcaption></figure>
+<h2>三、于是分数 ≈ N(E_F) × 一个近似二值的填充滤波器</h2>
+<p>表里只有 <b>{poslev}</b> 个不同的正取值，δ 只有 <b>{nd}</b> 档（偶数 Ne / 36）。
+把 log 分数拆开：A_d 贡献 <b>{sha}</b> 的方差，N(E_F) 贡献 <b>{shn}</b>，协方差 {shc}
+——「落在哪一级台阶」比「材料多能配对」更能决定分数。若只看平台内的 <b>{pn}</b> 个材料，
+A_d 只差 1.52 倍，N(E_F) 解释了 <b>{pvar}</b> 的方差，Spearman <b>{prho:.3f}</b>。</p>
+<figure>{fig_scatter}<figcaption>图 2｜平台内是一条直线（R² 0.97 来自 <code>index = N(E_F) × 常数</code> 这个恒等式，
+不是经验规律）。台阶外整片沉下去。</figcaption></figure>
 
-<h2>四、这条曲线，无偏方法不支持</h2>
-<p>赛事自己公开了两份 ED 校验表。我们只用其中 4×4 的 U=8 数值（无偏参考），把它和公布的
-A_d(δ) 在同样 5 个填充上并排。注意：两个团簇的最大距离不同（4×4 是 2√2，6×6 是 3√2），
-<b>绝对值不可比，只能比形状与次序</b>。</p>
+<h2>四、第一名坐在峰上</h2>
+<p>Top-20 全部落在 δ ≤ {t20d:.4f} 的 {t20lv} 级台阶上；20 个里有 {t20n} 个的 N(E_F) 排名本来就在前 20。
+榜首之争是填充位次的直接结果：</p>
+{table}
+<p><b>{t1}</b> 的 δ = {t1d:.4f}，正好是 A_d 的 argmax（{peak:.5f}）。<b>{t2}</b> 的 N(E_F) 高
+{nefgap}，但 δ = {t2d:.4f} 处的 A_d 低 {agap}，于是总分少 {sgap}。所以「谁第一」取决于谁的填充
+恰好落在峰上——这不算错，但它说明这块榜在排的是填充位次，不是材料。</p>
+<figure>{fig_board}<figcaption>图 3｜Top-20 与各自的 N(E_F) 排名。深色条表示 N(E_F) 排名也在前 20。</figcaption></figure>
 
-<figure>{fig_ed}<figcaption>图 4｜公布的曲线与 4×4 ED。Spearman ρ = <b>{erho_report:.2f}</b>。
-最刺眼的一点：δ=0.5（n=0.5）时公布值是 {osc05:.4f}（节点），ED 是 {ed05:.4f}（接近它自己的最大值）；
-n=0.75 时公布值 {osc075:.4f}，ED 只有 {ed075:.4f}。</figcaption></figure>
-
-<p>这并不是说公布值错了——6×6 变分 ansatz 本来就会把配对相关「做进去」。但它说明：
-<b>「A_d 随填充如何变化」这件事，公开证据里没有共识</b>。既然它没有共识，靠它排序就没有依据。</p>
-
-<h3>压力测试：两种问法，同一个答案</h3>
-<p><b>形状替换。</b>把 A_d(δ) 换成 4×4 ED 的形状（整体归一到同一中位数，只借形状），
-重算 Top-20：<b>20 个里只剩 {ov_shape:d} 个</b>。</p>
-<p><b>按公开散布扰动。</b>赛事公开的五个团簇，在同一填充上彼此相差最多 {spread_max:.1f} 倍。
-用这个散布的一半（σ = {sigma:.2f}）给每一级台阶的 A_d 加对数正态扰动，抽 {draws:d} 次：</p>
+<h2>五、ED 对比：能说明「次序未被识别」，不能裁决谁对</h2>
+<p>赛事公开了两份 ED 校验表。把 4×4 的 U=8 值与公布的 A_d 放在同样 5 个填充上并排：Spearman
+<b>{rho:.2f}</b>。但这个数字必须打折看：</p>
 <ul>
-<li>Top-20 的期望重合数 <b>{exp_ov:.1f} / 20</b>（{exp_frac}）；</li>
-<li>单个条目留在 Top-20 的概率落在 <b>{surv_min}–{surv_max}</b>；</li>
-<li>现任第一名保住第一的概率只有 <b>{first}</b>。</li>
+<li><b>只有 5 个点。</b>精确置换检验双侧 p = <b>{pperm:.2f}</b>。5 个点裁决不了一条曲线。</li>
+<li><b>对插值方向敏感。</b>把 ED 反向插到 15 个格点上算，ρ = <b>{grho:.2f}</b>；赛事自己在
+<code>validation/</code> 里用另一种插值读出 ≈ −0.1。三个数说明这个统计量对取点极敏感。</li>
+<li><b>两个团簇不是同一个量。</b>4×4 的最大距离是 2√2，6×6 是 3√2；绝对值不可比，只能比次序。</li>
+<li><b>ED 的「峰」也不是相互作用。</b>n=0.5 处 U=8/U=0 = 1.03：ED 那个 0.048 里 97% 是无相互作用
+的壳层值。真正被相互作用增强的是 n=0.875（1.85×），而它的绝对振幅只有 0.019。</li>
 </ul>
+<p>所以这一节的结论只能写到：<b>公布曲线随填充的次序，没有被无偏方法确认</b>。要裁决需要更大的团簇、
+更多的填充点，或者赛事公开自己的 6×6 求解器。</p>
+<figure>{fig_ed}<figcaption>图 4｜公布曲线 vs 4×4 ED。灰色点线是 U=0 对照：n=0.5 处 ED 的「峰」
+几乎全部来自能带，不是相互作用。</figcaption></figure>
 
-<figure>{fig_surv}<figcaption>图 5｜每个 Top-20 条目在扰动下存活的概率。没有一条超过 2/3。
-「谁第一」不是一个稳定的事实，取决于 6×6 这一个团簇的选择。</figcaption></figure>
+<h3>那把 ED 的形状代进去会怎样</h3>
+<p>把 A_d(δ) 换成 ED 的形状（归一到同一中位数，只借形状，δ &gt; 0.5 处 ED 没有数据、记 0），
+重算 Top-20：<b>20 个里剩 {ovs} 个</b>（把 ED 直接插到 18 个填充档上是 {ovg} 个）。
+这个数字只该读作「如果次序跟 ED 走，榜会长得完全不一样」，不能读作「ED 才是对的」。</p>
 
-<h2>五、Discovery 赛道为什么难：描述符里没有 N(E_F)</h2>
-<p>赛事鼓励「提名新材料」，由主办方做 DFT 降维后计分。我们用最朴素的化学近邻模型
-（组成向量，k=15，留一法）试了一下，能不能只用公开描述符把 N(E_F) 排出来：</p>
+<h2>六、稳健性：结论取决于误差结构，而公开数据定不了误差结构</h2>
+<p>赛事公开的五个团簇在同一填充上彼此相差最多 {spreadmax:.1f} 倍，n=0.5 处还变号。
+用这个散布的一半（σ = {sigma:.2f}）给每级台阶加扰动，但<b>误差沿填充轴怎么相关</b>，会决定全部答案：</p>
+<figure>{fig_structures}<figcaption>图 5｜同样的边际 σ，三种相关结构。整体缩放对排序零影响（这是乘法的性质），
+平滑相关保留 15/20，逐级独立只剩 9/20。</figcaption></figure>
 <ul>
-<li>log N(E_F) 的 R² = <b>{r2:.3f}</b>，MAE = <b>{mae:.3f}</b>，Pearson <b>{pear:.3f}</b>；</li>
-<li>填充 δ 的精确命中率 <b>{dexact}</b>，只比「全猜众数」的 {dmaj} 高一点点。</li>
+<li>单个全局乘子（等价于换团簇的整体标定）：<b>20.0 / 20</b>，第一名 100% 不变。</li>
+<li>AR(1) ρ=0.9（同一个 ansatz、同一段代码，误差应是填充的光滑函数）：<b>{ovar:.1f} / 20</b>。</li>
+<li>逐级独立（最能打散排序的假设）：<b>{oind:.1f} / 20</b>，第一名保住第一的概率 {first}。</li>
+<li>σ 扫描（独立假设）：σ=0.4 → {sw0:.1f}，0.6 → {sw1:.1f}，0.88 → {sw2:.1f}，1.2 → {sw3:.1f}。</li>
 </ul>
-<p>759 个尚未降维的金属里，模型给出的最高预测 N(E_F) 是 <b>{maxpred:.2f}</b>，
-而现役前三在 3.49–4.08。也就是说：<b>按公开描述符，池子里找不到能挑战榜首的材料</b>——
-这不是池子的问题，是描述符的问题。Discovery 实际上只能靠化学直觉 + 主办方的 DFT 算力。</p>
+<p>真实误差几乎不可能是逐级独立的：同一份代码、同一个团簇、同一套 ansatz，偏差必然随填充平滑变化。
+所以「第一名只有 {first} 概率保住」这句话不成立——它是 i.i.d. 假设的产物。可辩护的说法是：
+<b>排序对整体标定免疫，对随填充变化的系统误差敏感，而公开数据无法区分这两者。</b></p>
+<figure>{fig_surv}<figcaption>图 6｜最坏情况（逐级独立）下每个 Top-20 条目的存活率。这张图的作用是给出下界，
+不是给出概率。</figcaption></figure>
 
-<figure>{fig_screen}<figcaption>图 6｜留一法预测 vs 真值。点云是一团，不是一条线。</figcaption></figure>
+<h2>七、Discovery 赛道：筛选器连已知的冠军都找不回</h2>
+<p>赛事鼓励提名新材料。我们用最朴素的化学近邻（组成向量，k=15，留一法）检验「公开描述符能不能排 N(E_F)」：</p>
+<ul>
+<li>log N(E_F) 的 R² = <b>{r2:.3f}</b>，MAE = <b>{mae:.3f}</b>；δ 的精确命中 {dexact}，只比众数的 {dmaj} 高一点。</li>
+</ul>
+<p>更关键的是一次 sanity check——<b>它能不能把已知的前三名排出来</b>：</p>
+{table_lead}
+<p>三个都低了 3.7–8.6 倍，而 759 个未降维金属里模型给出的最高预测是 {maxpred:.2f}。
+一个连冠军都压到 0.94 的模型，说「池子里最高只有 1.57」没有任何信息量——这是回归向均值收缩的算术，
+不是池子的性质。诚实的结论是：<b>公开描述符不足以做 Discovery 筛选</b>，而不是「池子里没有挑战者」。</p>
+<figure>{fig_screen}<figcaption>图 7｜留一法预测 vs 真值。点云被压成一条竖带。</figcaption></figure>
 
-<p>所以我们只提名 5 个<b>同族/同计量比</b>的候选。表里给的是<b>母体实测值</b>，不是模型预测——
-模型没有能力给预测值，这一点上面已经说了。赌的是化学：同一族卤化物、同一套 3d 态，N(E_F) 有可能接近；
-主办方做一次 DFT 就能判。</p>
-{nom_table}
+<p>因此我们只提名 5 个<b>化学同族</b>的候选，且不给数值预测。表里是母体实测值：</p>
+{table_nom}
+<p>注意两点：一是「同计量比」这个说法只对 Br2Fe / FeI2 各自的两个多型成立，
+与母体（Br2Fe2、Fe2I2）是<b>不同计量比</b>；二是这个赌注本身很弱——多型之间的 N(E_F) 可以差很多，
+δ 也未知。提名只是把「值得算一次 DFT」的名单缩到 5 个，不构成任何预测。</p>
 
-<h2>六、给赛事的四条建议</h2>
+<h2>八、口径：这是 anchor 表，不是参赛排行榜</h2>
+<p><code>submissions.csv</code> 的 1,073 行<b>全部</b> <code>is_anchor = true</code>、作者全是
+<code>OSC-66</code>、方法名是「canonical scoring at material's DFT filling」。这是主办方对每个材料的
+标准锚点，参赛者的实时榜单不在这个 dump 里。另外 README 说榜首「currently ≈ 22」，
+而这份 dump 的锚点顶到 <b>{t1idx:.2f}</b>（{t1}）——差三倍。两种可能：README 的数字过期了，
+或者 dump 比 README 新。无论哪种，引用这块榜时都要说清是哪个口径。</p>
+
+<h2>九、建议</h2>
 <ol>
-<li><b>把分数拆成两栏发：台阶档位 + N(E_F)。</b>现在的单栏分数让读者以为在看「材料有多能配对」，
-实际在看「填充是否落在平台」。</li>
-<li><b>榜单加一列 N(E_F) 排名。</b>平台内它才是材料间的真实序；榜首之争会立刻变得有意义。</li>
-<li><b>给 A_d 一个方法不确定带。</b>跨团簇散布已经公开，把它画进榜单，比在 README 里写 caveat 更有用。</li>
-<li><b>Discovery 赛道需要一个可筛选的代理量。</b>哪怕是一个粗算的 N(E_F)（例如只对金属做一次非自洽
-DOS），否则「提名」等于让参赛者猜，而 DFT 排队会变成瓶颈。</li>
+<li><b>先解释半满那一格。</b>δ = 0 给 0.0384 与 README 的「vanishing at half-filling」直接冲突，
+而 {hfn} 个材料（{hfpct}）就坐在那里。这一格是整张表里最该被复核的数。</li>
+<li><b>补上 Ne = 4、6、8 的表项，或明确写「未计算」。</b>现在 dump 用 0 代替，读者分不清「没有 d 波序」
+和「没算」。</li>
+<li><b>分数拆两栏：台阶档位 + N(E_F)。</b>单栏分数让人以为在看「材料多能配对」，实际在看填充位次。</li>
+<li><b>把 A_d 的方法不确定带画进榜单</b>，并且<b>说清误差沿填充的相关性</b>——它比误差大小更能改变排序结论。</li>
+<li><b>Discovery 需要一个可筛选的代理量。</b>哪怕只对金属做一次非自洽 DOS；否则提名等于猜，DFT 排队会成为瓶颈。</li>
 </ol>
 
-<h2>七、局限（必须先说）</h2>
+<h2>十、局限</h2>
 <ul>
-<li>我们<b>不能</b>重跑主办方的 6×6 求解器（未公开），本报告只做「公开数据的复算」与「公开 ED 表的再分析」。</li>
-<li>4×4 ED 的最大距离与 6×6 不同，绝对振幅不可比；且 ED 本身未做尺寸收敛（贡献者 Ku-ku 自己写明）。
-本报告只用它比<b>形状与次序</b>。</li>
-<li>压力测试的 σ 是「跨团簇散布的一半」，是方法不确定性的<b>代理</b>，不是置信区间；
-「存活率」应读作「换一个团簇还会不会在榜上」，不是「真值落在区间内的概率」。</li>
-<li>化学近邻只用了组成，没有用结构、层群、磁性以外的信息；它的失败是<b>这套描述符</b>的失败，
-不排除别的模型能做得更好。</li>
-<li>分数按官方三位小数复算；我们报告的最大差 0.0005 是舍入，不是模型误差。</li>
+<li>不能重跑主办方的 6×6 求解器（未公开）。本报告只做公开数据的复算与公开 ED 表的再分析。</li>
+<li>4×4 ED 的最大距离与 6×6 不同，绝对值不可比；ED 本身未做尺寸收敛（贡献者 Ku-ku 自己写明），
+本报告只用它讨论次序。</li>
+<li>5 点相关（p = {pperm:.2f}）不足以裁决；σ 是跨团簇散布的一半，是<b>代理</b>，不是置信区间。</li>
+<li>化学近邻只用组成，未用结构、层群等其余描述符；它的失败是这套模型的失败，不排除更好的模型。</li>
+<li>0.0005 的最大差是三位小数舍入，不是模型误差。</li>
 </ul>
 
-<h2>八、复现</h2>
-<pre>git clone &lt;repo&gt; &amp;&amp; cd superconductor
-py -3 scripts/build.py        # 重算全部数字 + 六张图 + 报告
+<h2>十一、复现</h2>
+<pre>py -3 scripts/build.py        # 重算全部数字 + 七张图 + 报告
 py -3 verify/verify.py        # 独立重算并断言（不读 results.json）</pre>
-<p><code>verify/verify.py</code> 会从三张原始表重新推导本页每一个数字：{checks:d} 条断言，
-失败 0 条才算过。数据快照与 SHA256 见 <code>out/results.json</code> 的 <code>meta.files</code>。</p>
+<p><code>verify/verify.py</code> 从原始表重新推导本页每一个数字：<b>{checks} 条断言</b>，失败 0 条才算过。
+数据快照与 SHA256 见 <code>data/SHA256SUMS</code> 与 <code>out/results.json</code>。</p>
 
-<div class="foot">数据来源：FINAL-Bench / OSC-Superconductor（CC-BY-NC 4.0，材料衍生自 C2DB）。
-本报告为非商业学术分析；不声称发现超导体，也不声称公布的 A_d 有误——只指出「用它排序」这件事
-在公开证据下不成立。</div>
+<div class="foot">数据来源：FINAL-Bench / OSC-Superconductor（CC-BY-NC 4.0，材料衍生自 C2DB；
+多尺寸 ED 表由贡献者 Ku-ku 提供）。本报告为非商业学术分析；不声称发现超导体，也不声称公布的
+A_d 有误——只指出：这块表的半满格与它自己的文档冲突，且用它排序在公开证据下不可识别。</div>
 </div></body></html>""".format(**dict(
-        css=CSS, rev=m["dataset_revision"][:12], n="{:,.0f}".format(rep["n"]),
-        lv=g["n_delta"], tab=len(d["points"]), rho=pdec["spearman"],
-        maxdiff=rep["max_abs_diff"], over=rep["n_over_1e_3"], zeroed=rep["n_a_row_zeroed"],
-        nd=g["n_delta"], steps=", ".join(str(x) for x in g["ne_steps"]),
-        fig_dome=SVG["dome"], pspread=d["plateau"]["spread"],
-        pmin=d["plateau"]["a_min"], pmax=d["plateau"]["a_max"],
-        cliff_to=d["cliff"]["a_to"], cratio=d["cliff"]["ratio"],
-        sh_a=_pct(dec["share_a"]), sh_n=_pct(dec["share_nef"]), sh_c=_pct(dec["share_cov"]),
-        pn=pdec["n"], pvar=_pct(pdec["pearson"] ** 2), prho=pdec["spearman"],
-        t20d=bs["top20_max_delta"], t20n=int(bs["share_top20_nef_rank_le_20"] * 20),
-        t20lv=len(bs["top20_levels"]),
-        board_table=_table(["#", "材料", "指数", "N(E_F)", "δ", "N(E_F) 排名"], board_rows,
-                           (0, 2, 3, 4, 5)),
-        t1=bs["top1"]["formula"], t1d=bs["top1"]["delta"], t1nef=bs["top1"]["nef"],
-        t2=bs["top2"]["formula"], t2d=bs["top2"]["delta"], t2nef=bs["top2"]["nef"],
+        css=CSS, rev=m["dataset_revision"][:12],
+        poslev=d["positive_levels"], entries=d["entries"], prho=pdec["spearman"],
+        ovs=st["overlap_shape"], maxdiff=rep["max_abs_diff"],
+        over=rep["n_over_1e_3"], uncov=rep["n_uncovered"], negrows=88,
+        zeroed=rep["n_a_row_zeroed"],
+        hfa=hf["a_d"], hfpeak=d["peak"]["a_d"], hfshare=_pct(hf["share_of_peak"]),
+        hfn=hf["n_materials"], hfpct=_pct(hf["n_materials"] / float(rep["n"])),
+        fig_dome=SVG["dome"], nd=g["n_delta"],
+        sha=_pct(dec["share_a"]), shn=_pct(dec["share_nef"]), shc=_pct(dec["share_cov"]),
+        pn=pdec["n"], pvar=_pct(pdec["pearson"] ** 2),
+        fig_scatter=SVG["scatter"],
+        t20d=bs["top20_max_delta"], t20lv=len(bs["top20_levels"]),
+        t20n=int(bs["share_top20_nef_rank_le_20"] * 20),
+        table=_table(["#", "材料", "指数", "N(E_F)", "δ", "N(E_F) 排名"], board_rows,
+                     (0, 2, 3, 4, 5)),
+        t1=bs["top1"]["formula"], t1d=bs["top1"]["delta"], t1idx=bs["top1"]["index"],
+        peak=d["peak"]["a_d"],
+        t2=bs["top2"]["formula"], t2d=bs["top2"]["delta"],
         nefgap=_pct(bs["top2"]["nef"] / bs["top1"]["nef"] - 1),
-        agap="%.0f%%" % round(100 * (1 - bs["top2"]["a_d"] / bs["top1"]["a_d"])),
-        sgap="%.0f%%" % round(100 * (1 - bs["top2"]["index"] / bs["top1"]["index"])),
-        fig_scatter=SVG["scatter"], fig_board=SVG["board"], fig_ed=SVG["ed"],
-        erho_report=ed["spearman"],
-        osc05=[p["osc"] for p in ed["curve"] if abs(p["n"] - 0.5) < 1e-9][0],
-        ed05=[p["ed"] for p in ed["curve"] if abs(p["n"] - 0.5) < 1e-9][0],
-        osc075=[p["osc"] for p in ed["curve"] if abs(p["n"] - 0.75) < 1e-9][0],
-        ed075=[p["ed"] for p in ed["curve"] if abs(p["n"] - 0.75) < 1e-9][0],
-        ov_shape=st["overlap_shape"],
-        spread_max=max(s["spread"] for s in ed["spreads"] if s["spread"]),
-        sigma=st["sigma"], draws=st["draws"],
-        exp_ov=st["expected_overlap"], exp_frac=_pct(st["expected_overlap_frac"]),
-        surv_min=_pct(min(st["survival"].values())), surv_max=_pct(max(st["survival"].values())),
-        first=_pct(st["first"][bs["top1"]["material_id"]]),
+        agap=_pct(1 - bs["top2"]["a_d"] / bs["top1"]["a_d"]),
+        sgap=_pct(1 - bs["top2"]["index"] / bs["top1"]["index"]),
+        fig_board=SVG["board"], rho=ed["spearman"], pperm=ed["p_perm"],
+        grho=ed["grid_spearman"], fig_ed=SVG["ed"], ovg=st.get("overlap_grid", 2),
+        spreadmax=max(s["spread"] for s in ed["spreads"] if s["spread"]),
+        sigma=st["sigma"], fig_structures=SVG["structures"],
+        ovar=st["structures"]["ar1"]["expected_overlap"],
+        oind=st["structures"]["independent"]["expected_overlap"],
+        first=_pct(st["structures"]["independent"]["first"]),
+        sw0=st["sweep"][0]["expected_overlap"], sw1=st["sweep"][1]["expected_overlap"],
+        sw2=st["sweep"][2]["expected_overlap"], sw3=st["sweep"][3]["expected_overlap"],
         fig_surv=SVG["survival"], r2=sc["cv"]["r2"], mae=sc["cv"]["mae"],
-        pear=sc["cv"]["pearson"], dexact=_pct(sc["cv"]["delta_exact"]),
-        dmaj=_pct(sc["cv"]["delta_majority"]), maxpred=sc["max_pred_nef"],
-        fig_screen=SVG["screen"],
-        nom_table=_table(["化学式", "material_id", "关系", "母体", "母体 N(E_F)", "母体指数"],
+        dexact=_pct(sc["cv"]["delta_exact"]), dmaj=_pct(sc["cv"]["delta_majority"]),
+        table_lead=_table(["材料", "实测 N(E_F)", "留一法预测", "低估倍数"], leader_rows,
+                          (1, 2, 3)),
+        maxpred=sc["max_pred_nef"], fig_screen=SVG["screen"],
+        table_nom=_table(["化学式", "material_id", "关系", "母体", "母体 N(E_F)", "母体指数"],
                          nom_rows, (4, 5)),
-        checks=0,
+        checks=checks,
     ))
 
 
-SITE_CSS = """:root{--ink:#14202b;--muted:#6b7785;--line:#e3e8ee;--teal:#0f766e;--paper:#fbfbf9}
-*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);
-font:16px/1.75 "Source Han Serif SC","Songti SC",Georgia,serif}
-.wrap{max-width:960px;margin:0 auto;padding:64px 24px 96px}
-.kicker{font:600 12px/1.4 -apple-system,"Segoe UI",sans-serif;letter-spacing:.16em;
-text-transform:uppercase;color:var(--teal)}
-h1{font-size:clamp(34px,6vw,56px);line-height:1.1;margin:16px 0 10px}
-.sub{font-size:19px;color:var(--muted);margin:0 0 36px;max-width:640px}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin:32px 0 44px}
-.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px}
-.stat b{display:block;font:700 32px/1.15 -apple-system,"Segoe UI",sans-serif;color:var(--teal)}
-.stat span{font:12px/1.5 -apple-system,"Segoe UI",sans-serif;color:var(--muted)}
-h2{font-size:22px;margin:44px 0 12px;padding-top:16px;border-top:1px solid var(--line)}
-p{margin:0 0 14px;max-width:760px}
-figure{margin:26px 0}figure svg{width:100%;height:auto;border:1px solid var(--line);border-radius:12px;background:#fff}
-figcaption{font:13px/1.7 -apple-system,"Segoe UI",sans-serif;color:var(--muted);margin-top:8px}
-table{border-collapse:collapse;width:100%;max-width:560px;margin:16px 0;
-font:14px/1.5 -apple-system,"Segoe UI",sans-serif}
-th,td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:left}
-th{font-size:11px;color:var(--muted);letter-spacing:.06em;font-weight:600}
-td.r{color:var(--muted);width:28px}td.n{text-align:right;font-variant-numeric:tabular-nums}
-li{margin:8px 0}ul,ol{padding-left:22px;max-width:760px}
-.foot{margin-top:56px;font:12px/1.7 -apple-system,"Segoe UI",sans-serif;color:var(--muted);max-width:760px}
-a{color:var(--teal)}
-"""
-
-
-def render_site(R, SVG):
+def render_site(R, SVG, checks=0):
     rep, d, pdec, bs, st, sc = (R["reproduction"], R["dome"], R["plateau_decomposition"],
                                 R["board_stats"], R["stress"], R["screen"])
+    hf = R["half_filling"]
     top = R["board"][:10]
     rows = "".join(
         "<tr><td class='r'>%d</td><td>%s</td><td class='n'>%.1f</td><td class='n'>%.2f</td>"
@@ -306,71 +326,86 @@ def render_site(R, SVG):
         for r in top)
     return """<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>十八级台阶 — OSC 排行榜审计</title>
-<style>{site_css}</style></head><body><div class="wrap">
+<title>十八级台阶 — OSC 排行榜审计</title><style>{site_css}</style></head><body><div class="wrap">
 <div class="kicker">OSC · Open Superconductor Challenge</div>
 <h1>十八级台阶</h1>
-<p class="sub">我们把 OSC 公开的三张表拿来做了一件很朴素的事：把 1,073 条官方分数逐条复算。
-全部对上。于是问题变成了——这块榜到底在排什么？</p>
+<p class="sub">把 OSC 的三张公开表复算一遍。1,064 条分数对得上，9 条落在表的空洞里；
+而表在半满那一格的值，和它自己的 README 正好相反。</p>
 
 <div class="stats">
-<div class="stat"><b>{n} / {n}</b><span>条已验证分数，逐条复现，全部对上（最大差 {md:.4f}）</span></div>
-<div class="stat"><b>{lv:d}</b><span>带填充档位；A_d 只有 {tab:d} 个取值</span></div>
-<div class="stat"><b>{rho:.2f}</b><span>平台内「分数 vs N(E_F)」的 Spearman</span></div>
-<div class="stat"><b>{ov:d} / 20</b><span>换成 ED 形状后，Top-20 的存活数</span></div>
+<div class="stat"><b>1,064 / 1,073</b><span>条分数可由公开表直接算出（最大差 {maxdiff:.4f}）</span></div>
+<div class="stat"><b>{poslev} 个</b><span>不同的 A_d 正取值；{entries} 个条目里有 3 个是负的</span></div>
+<div class="stat"><b>{hfa:.4f}</b><span>半满（δ=0）处的 A_d，是峰值的 {hfshare}</span></div>
+<div class="stat"><b>{ovs} / 20</b><span>换成 4×4 ED 的形状后，Top-20 的存活数</span></div>
 </div>
 
-<h2>一、分数是可以算出来的</h2>
-<p><code>index = max(0, N(E_F) × A_d(δ) × 300)</code>。A_d 取自公开的 15 点表，δ = 1 − Ne/36。
-对 1,073 条 verified_score 逐条比对，最大绝对差 0.0005（官方保留三位小数），超差 0 条。
-排行榜里没有未公开的计算。</p>
+<h2>一、分数是算得出来的，但表有洞</h2>
+<p><code>index = max(0, N(E_F) × A_d(δ) × 300)</code>。1,073 条 verified_score 里，1,064 条能从表里算出来；
+另外 9 条落在 Ne = 4/6/8 三档——表里没有这三格，dump 直接写 0。「可复现」对这 9 行靠的是约定，不是计算。</p>
 
-<h2>二、A_d 不是穹顶，是平台加悬崖</h2>
-<p>δ ≤ 1/3 的 7 级台阶只差 {pspread:.2f} 倍；越过 1/3，一次掉 {cratio:.2f} 倍。
-平台里 log 分数与 log N(E_F) 的相关性是 {rho:.3f}——台阶之内，榜单就是 N(E_F) 榜单。</p>
-<figure>{fig_dome}<figcaption>公布的 A_d(δ)，标出平台、峰值与悬崖。</figcaption></figure>
+<h2>二、半满：表说 0.0384，README 说「消失」</h2>
+<p>README 写 A_d「vanishing at half-filling」。半满就是 δ = 0；表里给 {hfa:.5f}，峰值的 {hfshare}。
+全库 {hfn} 个材料（{hfpct}）正好坐在这一格，因此拿到接近满分的 A_d。在一个 U/t = 8 的 Mott 绝缘体上，
+这本身就是「A_d 是 ansatz 人造物」的证据——而文档恰恰用它来为指标背书。</p>
+<figure>{fig_dome}<figcaption>公布的 A_d(δ)，橙圈是半满。</figcaption></figure>
 
-<h2>三、第一名是填充的产物</h2>
-<p>{t1} 拿第一，但它的 N(E_F) 只排第 {t1r:d}；{t2} 的 N(E_F) 高 {nefgap}，
-却因为填充落在平台偏低端，总分少 {sgap}。Top-20 全部落在 δ ≤ {t20d:.4f} 的几级台阶上。</p>
+<h2>三、分数 ≈ N(E_F) × 填充滤波器</h2>
+<p>δ ≤ 1/3 的 7 级只差 1.52 倍；越过 1/3 掉 3.4 倍。平台内 log 分数与 log N(E_F) 的 Spearman 是 {prho:.3f}
+——台阶之内，榜单就是 N(E_F) 榜单。</p>
+<figure>{fig_scatter}<figcaption>平台内是一条直线；这是乘法的性质，不是发现。</figcaption></figure>
+
+<h2>四、第一名坐在峰上</h2>
+<p>{t1} 的 δ={t1d:.4f}，正好是 A_d 的 argmax；{t2} 的 N(E_F) 高 {nefgap}，但 A_d 低 {agap}，总分少 {sgap}。</p>
 <table><thead><tr><th>#</th><th>材料</th><th>指数</th><th>N(E_F)</th><th>N(E_F) 排名</th></tr></thead>
 <tbody>{rows}</tbody></table>
-<figure>{fig_board}<figcaption>Top-20 与它们的 N(E_F) 排名。</figcaption></figure>
+<figure>{fig_board}<figcaption>Top-20 与各自的 N(E_F) 排名。</figcaption></figure>
 
-<h2>四、无偏方法不支持这条曲线的形状</h2>
-<p>用赛事自己公开的 4×4 ED（无偏参考）在同一批填充上对比，Spearman ρ = <b>{erho:.2f}</b>。
-δ=0.5 时公布值是节点，ED 却接近它自己的最大值。把 A_d 换成 ED 的形状重算，Top-20 只剩 {ov:d} 个；
-按公开的跨团簇散布做扰动，Top-20 平均只剩 {eo:.1f} 个，现任第一名保住第一的概率 {first}。</p>
-<figure>{fig_ed}<figcaption>公布的曲线 vs 4×4 ED：次序相反。</figcaption></figure>
-<figure>{fig_surv}<figcaption>扰动下每个 Top-20 条目的存活率。</figcaption></figure>
+<h2>五、ED 只能说明「次序未被识别」</h2>
+<p>5 个点上 Spearman {rho:.2f}，置换检验 p = {pperm:.2f}；换一种插值读到 {grho:.2f}，赛事自己读到 ≈ −0.1。
+5 个点裁决不了。但把 ED 的形状代进去，Top-20 只剩 {ovs} 个——榜会完全换一批人。</p>
+<figure>{fig_ed}<figcaption>公布曲线 vs 4×4 ED；灰点线是 U=0 对照。</figcaption></figure>
 
-<h2>五、Discovery 赛道卡在描述符上</h2>
-<p>只用组成做化学近邻，log N(E_F) 的留一法 R² 只有 {r2:.2f}；759 个未降维金属里最高预测 N(E_F) 是 {mp:.2f}，
-现役前三在 3.5–4.1。公开描述符不足以筛出挑战榜首的材料——Discovery 实际依赖主办方的 DFT 算力。</p>
-<figure>{fig_screen}<figcaption>化学近邻的预测能力：一团，不是一条线。</figcaption></figure>
+<h2>六、稳健性取决于误差结构</h2>
+<p>同样的边际 σ：整体缩放 {oglobal:.1f}/20，平滑相关 {ovar:.1f}/20，逐级独立 {oind:.1f}/20。
+同一个 ansatz、同一段代码的误差不可能是逐级独立的——所以「第一名只有 28% 概率」这句话不成立。</p>
+<figure>{fig_structures}<figcaption>误差结构比误差大小更能改变结论。</figcaption></figure>
 
-<h2>六、四条建议</h2>
+<h2>七、筛选器连冠军都找不回</h2>
+<p>化学近邻的留一法 R² = {r2:.2f}；对已知前三的预测是 0.94 / 0.47 / 0.84，而真值是 3.65 / 4.08 / 3.49。
+它没有能力判断池子里有没有挑战者。</p>
+<figure>{fig_screen}<figcaption>预测被压成一条竖带。</figcaption></figure>
+
+<h2>八、这是 anchor 表，不是排行榜</h2>
+<p>1,073 行全部 is_anchor、作者全是 OSC-66——这是主办方的标准锚点。README 说榜首 ≈22，这份 dump 顶到
+{t1idx:.2f}。引用时必须说清口径。</p>
+
+<h2>九、五条建议</h2>
 <ol>
-<li>分数拆成两栏：<b>台阶档位</b> + <b>N(E_F)</b>。</li>
-<li>榜单加一列 N(E_F) 排名——平台内它才是材料间的真实序。</li>
-<li>把 A_d 的方法不确定带画进榜单，而不是只写在 README 的 caveat 里。</li>
-<li>Discovery 需要一个可筛选的代理量（哪怕粗算 DOS），否则提名等于猜。</li>
+<li>先解释半满那一格：0.0384 与「vanishing at half-filling」直接冲突。</li>
+<li>补 Ne = 4/6/8，或写明「未计算」——别用 0 代替。</li>
+<li>分数拆两栏：台阶档位 + N(E_F)。</li>
+<li>把方法不确定带画进榜单，并说清误差沿填充的相关性。</li>
+<li>Discovery 需要一个可筛选的代理量，否则提名等于猜。</li>
 </ol>
 
-<p class="foot">数据：FINAL-Bench / OSC-Superconductor（CC-BY-NC 4.0，材料衍生自 C2DB）。
-本页所有数字由 <code>scripts/build.py</code> 生成，<code>verify/verify.py</code> 独立复算。
-不声称发现超导体，也不声称公布的 A_d 有误——只指出「用它排序」在公开证据下不成立。</p>
+<p class="foot">数据：FINAL-Bench / OSC-Superconductor（CC-BY-NC 4.0）。所有数字由
+<code>scripts/build.py</code> 生成，<code>verify/verify.py</code> 独立复算（{checks} 条断言）。
+不声称发现超导体，也不声称公布的 A_d 有误。</p>
 </div></body></html>""".format(**dict(
-        n="{:,.0f}".format(rep["n"]), md=rep["max_abs_diff"],
-        lv=R["grid"]["n_delta"], tab=len(d["points"]), rho=pdec["spearman"],
-        ov=st["overlap_shape"], pspread=d["plateau"]["spread"], cratio=d["cliff"]["ratio"],
-        fig_dome=SVG["dome"], t1=bs["top1"]["formula"], t1r=bs["top1"]["nef_rank"],
-        t2=bs["top2"]["formula"],
+        site_css=SITE_CSS, maxdiff=rep["max_abs_diff"], poslev=d["positive_levels"],
+        entries=d["entries"], hfa=hf["a_d"], hfshare=_pct(hf["share_of_peak"]),
+        ovs=st["overlap_shape"], hfn=hf["n_materials"],
+        hfpct=_pct(hf["n_materials"] / float(rep["n"])), fig_dome=SVG["dome"],
+        prho=pdec["spearman"], fig_scatter=SVG["scatter"], t1=bs["top1"]["formula"],
+        t1d=bs["top1"]["delta"], t2=bs["top2"]["formula"],
         nefgap=_pct(bs["top2"]["nef"] / bs["top1"]["nef"] - 1),
-        sgap="%.0f%%" % round(100 * (1 - bs["top2"]["index"] / bs["top1"]["index"])),
-        t20d=bs["top20_max_delta"], rows=rows, fig_board=SVG["board"],
-        erho=R["ed"]["spearman"], eo=st["expected_overlap"],
-        first=_pct(st["first"][bs["top1"]["material_id"]]),
-        fig_ed=SVG["ed"], fig_surv=SVG["survival"], r2=sc["cv"]["r2"],
-        mp=sc["max_pred_nef"], fig_screen=SVG["screen"], site_css=SITE_CSS,
+        agap=_pct(1 - bs["top2"]["a_d"] / bs["top1"]["a_d"]),
+        sgap=_pct(1 - bs["top2"]["index"] / bs["top1"]["index"]),
+        rows=rows, fig_board=SVG["board"], rho=R["ed"]["spearman"], pperm=R["ed"]["p_perm"],
+        grho=R["ed"]["grid_spearman"], fig_ed=SVG["ed"],
+        oglobal=st["structures"]["global"]["expected_overlap"],
+        ovar=st["structures"]["ar1"]["expected_overlap"],
+        oind=st["structures"]["independent"]["expected_overlap"],
+        fig_structures=SVG["structures"], r2=sc["cv"]["r2"], fig_screen=SVG["screen"],
+        t1idx=bs["top1"]["index"], checks=checks,
     ))

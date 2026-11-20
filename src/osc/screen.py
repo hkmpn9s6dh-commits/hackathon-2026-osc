@@ -131,3 +131,13 @@ def loo_pairs(active, k=15):
         z = sum(wi * math.log(amap[mid]["nef"]) for wi, (_, mid) in zip(w, ns)) / sum(w)
         out.append((math.log(m["nef"]), z))
     return out
+
+
+def recover_leaders(active, k=15, top_n=3):
+    """Sanity check the screener cannot pass: can it rank the known leaders?"""
+    pairs = dict(((m["material_id"], p) for m, (t, p) in
+                  zip(active, loo_pairs(active, k))))
+    leaders = sorted(active, key=lambda m: -m["nef"] * m["a_d"])[:top_n]
+    return [dict(material_id=m["material_id"], formula=m["formula"], nef=m["nef"],
+                 delta=m["delta"], pred_nef=math.exp(pairs[m["material_id"]]))
+            for m in leaders]

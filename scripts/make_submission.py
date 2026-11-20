@@ -64,9 +64,15 @@ def main():
         author="CB (WorkBuddy agent, on behalf of the account owner)",
         scope="audit of the published tables; no private solver was re-run",
         key_numbers=dict(
-            reproduced=R["reproduction"]["n"],
+            reproduced=R["reproduction"]["n_covered"],
+            rows_total=R["reproduction"]["n"],
+            rows_in_table_holes=R["reproduction"]["n_uncovered"],
             max_abs_diff=R["reproduction"]["max_abs_diff"],
             delta_levels=R["grid"]["n_delta"],
+            positive_levels=R["dome"]["positive_levels"],
+            half_filling_a_d=R["half_filling"]["a_d"],
+            half_filling_share_of_peak=R["half_filling"]["share_of_peak"],
+            materials_at_half_filling=R["half_filling"]["n_materials"],
             plateau_levels=len([p for p in R["dome"]["points"]
                                 if p["delta"] <= R["dome"]["plateau"]["max_delta"] + 1e-9]),
             plateau_spread=R["dome"]["plateau"]["spread"],
@@ -75,29 +81,47 @@ def main():
             share_nef=R["decomposition"]["share_nef"],
             plateau_spearman=R["plateau_decomposition"]["spearman"],
             ed_spearman=R["ed"]["spearman"],
+            ed_spearman_p_perm=R["ed"]["p_perm"],
+            ed_spearman_on_grid=R["ed"]["grid_spearman"],
             top20_overlap_shape=R["stress"]["overlap_shape"],
-            top20_overlap_band=R["stress"]["expected_overlap"],
-            top1_stays_first=R["stress"]["first"][R["board_stats"]["top1"]["material_id"]],
+            top20_overlap_global=R["stress"]["structures"]["global"]["expected_overlap"],
+            top20_overlap_ar1=R["stress"]["structures"]["ar1"]["expected_overlap"],
+            top20_overlap_independent=R["stress"]["structures"]["independent"]["expected_overlap"],
+            screener_r2=R["screen"]["cv"]["r2"],
+            screener_leader_ratio=[round(l["nef"] / l["pred_nef"], 2) for l in R["screen"]["leaders"]],
         ),
         how_to_reproduce=["./submission/method/run.sh",
                           "py -3 scripts/build.py",
                           "py -3 verify/verify.py"],
         claims=[
-            "Every one of the 1073 verified scores is recomputed from (N(E_F), delta) plus "
-            "the published A_d table, to better than 1e-3.",
-            "A_d depends only on delta; the index is therefore N(E_F) times a step function "
-            "with 15 values, 7 of them on a plateau that spans only 1.52x.",
-            "Inside the plateau the board is the N(E_F) ranking (Spearman 0.97).",
-            "The shape of A_d(delta) is not reproduced by the unbiased 4x4 ED that the "
-            "challenge ships (Spearman -0.60); substituting the ED shape leaves 1 of the "
-            "top-20 in place.",
+            "1064 of the 1073 verified scores are recomputed from (N(E_F), delta) plus the "
+            "published A_d table to better than 1e-3; the remaining 9 sit at Ne=4,6,8, where "
+            "the table has no entry and the dump writes 0.",
+            "The shipped table contradicts the challenge README at half filling: 0.03844 "
+            "(66% of the peak) at delta=0, where the README says A_d vanishes. 120 materials "
+            "(11%) sit on that level.",
+            "A_d takes 12 positive values; the seven levels with delta<=1/3 span 1.52x and "
+            "the next step drops 3.4x. Inside the plateau the board is the N(E_F) ranking "
+            "(Spearman 0.97).",
+            "The #1 material sits exactly on the argmax of A_d; the #2 has 12% higher N(E_F) "
+            "and loses 14% of index.",
+            "ED cannot adjudicate the shape (n=5, permutation p=0.35, rho -0.60 to -0.72), "
+            "but substituting the ED shape leaves 4 of the top-20 in place.",
+            "Rank stability depends on the error structure, not its size: global rescale "
+            "20/20, AR(1) 15/20, independent 9/20. The '28% chance' reading is an i.i.d. "
+            "artefact and is withdrawn.",
+            "The composition-only screener fails its sanity check (leaders under-predicted "
+            "3.7x-8.6x), so it cannot say whether the un-downfolded pool contains a "
+            "challenger.",
         ],
         limitations=[
             "The organisers' 6x6 solver is not public and was not re-run.",
             "4x4 ED has a different maximum distance from 6x6; only shape and order are "
             "compared, not absolute amplitudes.",
             "The perturbation band is a proxy for method uncertainty, not a confidence "
-            "interval.",
+            "interval; only the ordering of the three error structures is robust.",
+            "The Discovery nominations carry no numeric prediction and rest on composition "
+            "analogy only.",
         ],
     )
     with io.open(os.path.join(SUB, "method", "package.json"), "w", encoding="utf-8") as f:
